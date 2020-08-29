@@ -14,5 +14,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('Elearning.Dashboard.content');
 });
+
+Route::resource('siswa','Elearning\Siswa');
+Route::get('export', 'Elearning\Siswa@export')->name('export');
+Route::post('import-siswa', 'Elearning\Siswa@import');
