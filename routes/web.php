@@ -20,3 +20,10 @@ Route::get('/', function () {
 Route::resource('siswa','Elearning\Siswa');
 Route::get('export', 'Elearning\Siswa@export')->name('export');
 Route::post('import-siswa', 'Elearning\Siswa@import');
+
+Route::resource('guru','Elearning\Guru');
+Route::post('import-guru', 'Elearning\Guru@import');
+
+Route::resource('soal','Elearning\Soal');
+Route::put('statu-update','Elearning\Soal@status');
+Route::post('upload-soal','Elearning\Soal@upload');

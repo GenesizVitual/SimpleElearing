@@ -60,9 +60,9 @@ class Siswa extends Controller
 
         $model = tbl_siswa::findOrFail($id);
         if($model->delete()){
-            return redirect()->back()->with('message_success','Anda telah menghapus data siswa :'.$model->nama);
+            return redirect()->back()->with('message_success',' Anda telah menghapus data siswa :'.$model->nama);
         }else{
-            return redirect()->back()->with('message_error','gagal, menghapus data siswa');
+            return redirect()->back()->with('message_error',' gagal, menghapus data siswa');
         }
     }
 
@@ -83,8 +83,8 @@ class Siswa extends Controller
         if ($req->hasFile('file')) {
             $file = $req->file('file'); //GET FILE
             Excel::import(new SiswaImport, $file);
-            return redirect()->back()->with(['success' => 'Upload success']);
+            return redirect()->back()->with('message_success',' Import data siswa telah selesai');
         }
-        return redirect()->back()->with(['error' => 'Please choose file before']);
+        return redirect()->back()->with('message_error',' Gagal,mengimport data siswa');
     }
 }
