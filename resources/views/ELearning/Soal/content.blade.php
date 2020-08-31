@@ -73,7 +73,7 @@
 
                                             </div>
                                             @if(!empty($data_soal->linkToFileSoal->nama_file))
-                                                <small style="color: green;">{{ $data_soal->linkToFileSoal->nama_file }}</small>
+                                                <small style="color: green;">Soal Telah terhubung</small>
                                             @else
                                                 <small style="color:red">Dokumen belum tersedia</small>
                                             @endif
@@ -86,8 +86,9 @@
                                             <button type="button" class="btn btn-info dropdown-toggle dropdown-hover dropdown-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <span class="sr-only">Toggle Dropdown</span>
                                                 <div class="dropdown-menu dropdown-menu-right" role="menu" style="">
-                                                    <a class="dropdown-item" href="#" onclick="upload('{{ $data_soal->id }}')"><i class="fa fa-upload"></i> Upload Soal</a>
-                                                    <a class="dropdown-item" href="#" onclick="upload('{{ $data_soal->id }}')"><i class="fa fa-eye"></i> Lihat Soal</a>
+                                                    <a class="dropdown-item" href="#" onclick="upload('{{ $data_soal->id }}')"><i class="fa fa-upload"></i> Embedend Soal</a>
+                                                    <a class="dropdown-item" href="#" onclick="window.location.href='{{ url('lihat-dokumen-soal/'. $data_soal->id) }}' "><i class="fa fa-eye"></i> Lihat Soal</a>
+                                                    <a class="dropdown-item" href="#" onclick="kunci_jawaban('{{ $data_soal->id }}')"><i class="fa fa-key"></i> Kunci Jawaban</a>
                                                     <hr>
                                                     <a class="dropdown-item" href="#" onclick="edit('{{ $data_soal->id }}')"><i class="fa fa-pen"></i> ubah</a>
                                                     <a class="dropdown-item" href="#" onclick="onDelete('{{ $data_soal->id }}')"><i class="fa fa-eraser"></i> hapus</a>
@@ -112,7 +113,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Panel Upload Dokumen Soal</h4>
+                    <h4 class="modal-title">Panel Embend Soal</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -121,16 +122,22 @@
                     <div class="modal-body">
                         {{ csrf_field() }}
                         <div class="form-group">
-                            <label for="exampleInputFile">Dokumen Soal</label>
+                            <label for="exampleInputFile">Masukan Code Embedend</label>
                             <div class="custom-file">
-                                <input type="file" class="form-control" name="file" id="customFile" required>
+                                <textarea class="form-control" name="file" required></textarea>
                                 <input type="hidden" class="form-control" name="id_tema_soal">
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <small>Format file yang didukung adalah *docx atau *pdf.</small>
-                        <button type="submit" class="btn btn-success float-right">Proses</button>
+                        <div class="row">
+                            <div class="col-md-9">
+                                <small>Code Embenden soal diperoleh dari google drive. Jika anda membagikan dokumen soal yang anda upload</small>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-success float-right">Proses</button>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -139,6 +146,42 @@
         <!-- /.modal-dialog -->
     </div>
 
+    <div class="modal fade" id="modal-kunci-jawaban">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Panel Kunci Jawaban</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ url('form-kunci-jawaban') }}" method="post" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <label for="exampleInputFile">Banyak Soal</label>
+                            <div class="custom-file">
+                                <input type="number" min="1" class="form-control" name="banyak_soal" value="1" required/>
+                                <input type="hidden" class="form-control" name="id_tema_soal">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <small>Masukan banyak soal sesuai dengan soal yang anda hubungkan</small>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-success float-right">Proses</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
 
     <div class="modal fade" id="modal-default-proses">
         <div class="modal-dialog">
@@ -271,6 +314,12 @@
             upload = function (id) {
                 $('[name="id_tema_soal"]').val(id);
                 $('#modal-default').modal('show');
+            }
+
+            kunci_jawaban = function (id) {
+                $('[name="id_tema_soal"]').val(id);
+                $('#modal-kunci-jawaban').modal('show');
+
             }
 
             onDelete=function (id) {

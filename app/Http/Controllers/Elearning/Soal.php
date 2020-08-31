@@ -125,29 +125,21 @@ class Soal extends Controller
             'file'=>'required|file|mimes:pdf,docx|max:25000'
         ]);
         $file = $req->file;
-        $uniqueFileName = time() . '.' . $file->getClientOriginalExtension();
-
-        $model = FileSoal::where('id_tema_soal',$req->id_tema_soal)->first();
-
-        if(!empty($model)){
-            if(!empty($model->nama_file))
-            {
-                $file_path =public_path('file').'/'. $model->nama_file;
-                if (file_exists($file_path)) {
-                    @unlink($file_path);
-                }
-            }
-        }
 
         $nmodel = FileSoal::updateOrCreate(
-            ['id_tema_soal'=>$req->id_tema_soal],['nama_file'=>$uniqueFileName]
+            ['id_tema_soal'=>$req->id_tema_soal],['nama_file'=>$file]
         );
 
         if($nmodel){
-            $req->file->move(public_path('file/'), $uniqueFileName);
             return redirect()->back()->with('message_success', 'File Soal Berhasil Upload');
         }
 
+    }
+
+    public function view_documen($id){
+        $model = tbl_soal::findOrFail($id);
+        $url_file = public_path('file/').$model->linkToFileSoal->nama_file;
+        return view('Elearning.Soal.view_dokumen', array('data'=> $model,'url'=>$url_file));
     }
 
 }
