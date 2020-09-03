@@ -9,7 +9,7 @@ class JawabanSiswa extends Model
     //
 
     protected $table = 'tbl_jawaban_siswa';
-    protected $fillable = ['id_kunci_jawaban','id_siswa','jawaban','no_urut'];
+    protected $fillable = ['id_kunci_jawaban','id_siswa_ujian','id_siswa','jawaban','no_urut'];
 
 
 }

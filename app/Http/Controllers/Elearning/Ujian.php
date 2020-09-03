@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Model\Soal as tbl_soal;
 use App\Model\SiswaUjian;
 use App\Model\JawabanSiswa;
+use App\Model\KunciJawaban;
 
 class Ujian extends Controller
 {
@@ -33,27 +34,29 @@ class Ujian extends Controller
             return redirect()->back()->with('message_info','Token ujian yang anda masukan salah atau ujian yang anda ikuti belum dimulai');
         }
         $mdoel_tema_ujian = $data_tema_ujian->first();
-        $model = SiswaUjian::updateOrCreate(
+        $waktu_kerja = date('H:i:s',strtotime($mdoel_tema_ujian->time));
+        $get_hour = intval(date('H', strtotime($waktu_kerja)));
+        $get_minute = intval(date('i', strtotime($waktu_kerja)));
+        $waktu_sekarang = date('Y-m-d H:i:s', strtotime('+'.$get_hour.' hours +'.$get_minute.' minute'));
+
+        $model = SiswaUjian::firstOrCreate(
             ['id_tema_soal'=> $mdoel_tema_ujian->id,'id_siswa'=>$req->id_siswa],
-            ['status'=> '1']
+            ['status'=> '1', 'waktu_mulai'=>date('Y-m-d H:i:s', strtotime($waktu_sekarang))]
         );
 
-        if(empty(strtotime($model->waktu_mulai))) {
-            $waktu_sekaran = strtotime($mdoel_tema_ujian->time);
-        }else{
-            $waktu_sekaran = strtotime($model->waktu_mulai);
-        }
 
-        $date_format = date('H:i:s', $waktu_sekaran);
+
+        $date_format = date('Y/m/d H:i:s', strtotime($model->waktu_mulai));
 
         $data = [
             'data_ujian'=>$mdoel_tema_ujian,
             'id_siswa'=> $req->id_siswa,
             'id_tema_siswa'=> $mdoel_tema_ujian->id,
+            'id_siswa_ujian'=> $model->id,
             'kode_siswa'=> $req->kode_siswa,
-            'count_down_time'=>$waktu_sekaran,
+            'count_down_time'=>strtotime($date_format),
             'jam'=> intval(date('H', strtotime($date_format))),
-            'minute'=> intval(date('i', strtotime($date_format)))
+            'minute'=> intval(date('i', strtotime($date_format))),
         ];
 
 
@@ -66,13 +69,14 @@ class Ujian extends Controller
             'id_kunci_jabawan'=>'required',
             'id_siswa'=>'required',
             'jawaban'=>'required',
+            'id_ujian'=>'required',
             'no_urut'=>'required',
             '_method'=>'required',
             '_token'=>'required',
         ]);
 
         $model = JawabanSiswa::updateOrCreate(
-            ['id_kunci_jawaban'=> $req->id_kunci_jabawan,'id_siswa'=>$req->id_siswa,'no_urut'=>$req->no_urut],
+            ['id_kunci_jawaban'=> $req->id_kunci_jabawan,'id_siswa_ujian'=>$req->id_ujian,'id_siswa'=>$req->id_siswa,'no_urut'=>$req->no_urut],
             ['jawaban'=> $req->jawaban]
         );
 
@@ -114,6 +118,39 @@ class Ujian extends Controller
             ['status'=> '2']
         );
 
-        return response()->json(['status'=>'info','message'=>'Waktu Pengerjaan Soal Telah Selesai, Anda akan dialihkan ke halaman nilai']);
+        return response()->json(['status'=>'info','message'=>'Waktu Pengerjaan Soal Telah Selesai, Anda akan dialihkan ke halaman nilai','status_button'=>$model->status]);
     }
+
+
+    public function nilai_ujian(Request $req){
+        $this->validate($req,[
+            'id_siswa'=> 'required',
+            'id_tema_soal'=> 'required',
+            '_token'=> 'required',
+        ]);
+
+        $model = KunciJawaban::all()->where('id_tema_soal',$req->id_tema_soal)->sortBy('no_urut');
+        $row = array();
+        $jawaban_benar=0;
+        $jawaban_score=0;
+        $jawaban_salah=0;
+        foreach ($model as $data){
+            $data_jabawan_siswa = $data->linkToKunciJabawan->where('id_siswa', $req->id_siswa)->first();
+            if($data_jabawan_siswa->jawaban == $data->jawaban){
+                $jawaban_score +=  $data->score;
+                $jawaban_benar +=  1;
+            }else{
+                $jawaban_salah += 1;
+            }
+        }
+
+        $data = [
+            'jawaban_benar'=> $jawaban_benar,
+            'jawaban_salah'=> $jawaban_salah,
+            'jawaban_score'=> ($jawaban_score*$jawaban_benar)/$model->count(),
+        ];
+
+        return response()->json($data);
+    }
+
 }

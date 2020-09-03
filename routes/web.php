@@ -13,9 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('Elearning.Dashboard.content');
-});
+Route::get('/', 'Elearning\Reglog@login');
 
 Route::resource('siswa','Elearning\Siswa');
 Route::get('export', 'Elearning\Siswa@export')->name('export');
@@ -36,4 +34,5 @@ Route::post('form-kunci-jawaban','Elearning\KunciJawaban@create');
 Route::get('ujian','Elearning\Ujian@index');
 Route::post('ikut-ujian','Elearning\Ujian@ikut_ujian');
 Route::put('jawab-ujian','Elearning\Ujian@jawab_ujian');
-Route::post('update-time','Elearning\Ujian@updateWaktuUjian');
+Route::post('update-status','Elearning\Ujian@updateStatusUjian');
+Route::post('nilai-ujian','Elearning\Ujian@nilai_ujian');

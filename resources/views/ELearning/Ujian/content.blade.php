@@ -10,7 +10,7 @@
         <div class="d-flex justify-content-center">
             <div class="login-box">
                 <div class="login-logo">
-                    <a href="../../index2.html"><b>Formulir Login</b> Ujian</a>
+                    <a href="../../index2.html"><b>Formulir Masuk</b> Ujian</a>
                 </div>
                 <!-- /.login-logo -->
                 <div class="card">

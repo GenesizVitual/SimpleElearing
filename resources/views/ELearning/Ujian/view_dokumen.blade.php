@@ -10,7 +10,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-3">
-                <a class="btn btn-primary"  data-widget="control-sidebar" data-slide="true" href="#" role="button"><i class="fa fa-fire"></i> Jawab</a>
+                <button type="button" class="btn btn-primary"  id="tombol-jawab" data-widget="control-sidebar" data-slide="true" href="#" role="button"><i class="fa fa-fire"></i> Jawab</button>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <h2 style="text-align: center" id="demo">Waktu Ujian Dimulai</h2>
@@ -35,7 +35,8 @@
         <div class="row">
 
             <div class="col-md-12" id="example1" style="width: 100%">
-                {!! $data_ujian->linkToFileSoal->nama_file !!}
+                {{--{!! $data_ujian->linkToFileSoal->nama_file !!}--}}
+                <iframe src="{{ $data_ujian->linkToFileSoal->nama_file }}" width="100%" height="500"></iframe>
             </div>
 
         </div>
@@ -43,17 +44,48 @@
 </div>
 <!-- /.content -->
 
+
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Pesan Soal</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h1 style="color: green; text-align: center;" id="jawaban_benar">Benar :</h1>
+                        </div>
+                        <div class="col-md-6">
+                            <h1 style="color: red;text-align: center;" id="jawaban_salah">Salah</h1>
+                        </div>
+                        <div class="col-md-12">
+                            <h1 style="color: gold;text-align: center;" id="total_score">Score</h1>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 @stop
 
 @section('jsContainer')
         {{--<script src="{{ asset('PDFObject/pdfobject.js') }}"></script>--}}
         {{--<script>PDFObject.embed("https://drive.google.com/file/d/1YlISufiCbleEF3gsluP7tjM5f58L2D3a/view?usp=sharing", "#example1");</script>--}}
         <script>
+
+            $("iframe").tooltip('hide');
+
             // Set the date we're counting down to
             var today = new Date();
             var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-            today.setHours(today.getHours()+parseInt('{{ $jam }}'));
-            today.setMinutes(today.getMinutes()+parseInt('{{ $minute }}'));
+            today.setHours(parseInt('{{ $jam }}'));
+            today.setMinutes(parseInt('{{ $minute }}'));
             var time =  today.getHours()+ ":" + today.getMinutes() + ":" + today.getSeconds();
 
             var current_date = date+' '+time;
@@ -78,29 +110,17 @@
                 // Display the result in the element with id="demo"
                 document.getElementById("demo").innerHTML =  hours + " Jam "
                     + minutes + " Menit " + seconds + " detik ";
-                update_time(hours+':'+minutes+':'+seconds);
+//                update_time(hours+':'+minutes+':'+seconds);
                 // If the count down is finished, write some text
                 if (distance < 0) {
                     clearInterval(x);
-                    document.getElementById("demo").innerHTML = "EXPIRED";
+                    document.getElementById("demo").innerHTML = "Waktu Pengerjaan Telah Berakhir";
                     update_status();
+                    result();
                 }
+
             }, 1000);
 
-            update_time = function (time) {
-                $.ajax({
-                    url:'{{ url('update-time') }}',
-                    type:'post',
-                    data:{
-                        'id_siswa': '{{$id_siswa }}',
-                        'id_tema_soal': '{{ $id_tema_siswa }}',
-                        'time': time,
-                        '_token':'{{ csrf_token() }}'
-                    },success:function (result) {
-                        console.log(result);
-                    }
-                })
-            }
 
             update_status = function () {
 
@@ -112,17 +132,40 @@
                 });
 
                 $.ajax({
-                    url:'{{ url('update-time') }}',
+                    url:'{{ url('update-status') }}',
                     type:'post',
                     data:{
                         'id_siswa': '{{$id_siswa }}',
                         'id_tema_soal': '{{ $id_tema_siswa }}',
                         '_token':'{{ csrf_token() }}'
                     },success:function (result) {
+                        if(result.status_button==2){
+                            $('#tombol-jawab').prop('disabled', true);
+                        }
                         Toast.fire({
                             icon: result.status,
                             title: result.message
                         })
+
+                    }
+                })
+            }
+
+            result = function () {
+                $.ajax({
+                    url:'{{ url('nilai-ujian') }}',
+                    type:'post',
+                    data:{
+                        'id_siswa': '{{$id_siswa }}',
+                        'id_tema_soal': '{{ $id_tema_siswa }}',
+                        '_token':'{{ csrf_token() }}'
+                    },success:function (result) {
+                       console.log(result.jawaban_benar);
+                        $('#modal-default').modal('show')
+                       $('#jawaban_benar').text('Benar :'+result.jawaban_benar);
+                       $('#jawaban_salah').text('Salah :'+result.jawaban_salah);
+                       $('#total_score').text('Jumlah Score :'+result.jawaban_score);
+
                     }
                 })
             }

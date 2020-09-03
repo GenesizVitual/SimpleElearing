@@ -93,7 +93,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 @yield('jsContainer')
 @include('ELearning.component_admin.toast')
   <script>
-      onSelected= function (id_siswa,no_urut, id, jawaban) {
+      onSelected= function (id_ujian,id_siswa,no_urut, id, jawaban) {
 
           const Toast = Swal.mixin({
               toast: true,
@@ -109,6 +109,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   'id_siswa':id_siswa,
                   'no_urut':no_urut,
                   'id_kunci_jabawan':id,
+                  'id_ujian':id_ujian,
                   'jawaban':jawaban,
                   '_token':'{{ csrf_token() }}',
                   '_method':'put',

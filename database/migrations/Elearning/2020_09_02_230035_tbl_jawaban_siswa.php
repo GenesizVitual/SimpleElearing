@@ -17,6 +17,7 @@ class TblJawabanSiswa extends Migration
             $table->id();
             $table->foreignId('id_kunci_jawaban')->references('id')->on('tbl_kunci_jawaban')->onDelete('cascade');
             $table->foreignId('id_siswa')->references('id')->on('tbl_siswa')->onDelete('cascade');
+            $table->foreignId('tbl_siswa_ujian')->references('id')->on('tbl_siswa_ujian')->onDelete('cascade');
             $table->enum('jawaban',['-','a','b','c','d','e'])->default('-');
             $table->integer('no_urut')->unsigned();
             $table->timestamps();

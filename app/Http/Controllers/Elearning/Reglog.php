@@ -8,4 +8,8 @@ use Illuminate\Http\Request;
 class Reglog extends Controller
 {
     //
+
+    public function login(){
+        return view('page_login_regis.login');
+    }
 }

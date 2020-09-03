@@ -124,9 +124,9 @@ class Soal extends Controller
     public function upload(Request $req){
         $this->validate($req,[
             'id_tema_soal'=>'required',
-            'file'=>'required|file|mimes:pdf,docx|max:25000'
+            'file'=>'required'
         ]);
-        $file = $req->file;
+        $file = str_replace('view','preview',$req->file);
 
         $nmodel = FileSoal::updateOrCreate(
             ['id_tema_soal'=>$req->id_tema_soal],['nama_file'=>$file]
