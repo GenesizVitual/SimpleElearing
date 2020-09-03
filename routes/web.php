@@ -15,6 +15,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'Elearning\Reglog@login');
 
+Route::get('admin', 'Elearning\Reglog@admin');
+
+Route::post('login-check', 'Elearning\Reglog@check_login');
+
+Route::post('login-admin', 'Elearning\Reglog@login_admin');
+
+Route::get('dashboard', function(){
+    return view('Elearning.content');
+});
+
 Route::resource('siswa','Elearning\Siswa');
 Route::get('export', 'Elearning\Siswa@export')->name('export');
 Route::post('import-siswa', 'Elearning\Siswa@import');
@@ -31,8 +41,18 @@ Route::get('kunci-jawaban/{id}','Elearning\KunciJawaban@show');
 Route::post('store-jabawan','Elearning\KunciJawaban@store');
 Route::post('form-kunci-jawaban','Elearning\KunciJawaban@create');
 
+
+//==========Siswa=====================
+
 Route::get('ujian','Elearning\Ujian@index');
 Route::post('ikut-ujian','Elearning\Ujian@ikut_ujian');
 Route::put('jawab-ujian','Elearning\Ujian@jawab_ujian');
 Route::post('update-status','Elearning\Ujian@updateStatusUjian');
 Route::post('nilai-ujian','Elearning\Ujian@nilai_ujian');
+
+
+Route::get('log-out','Elearning\Reglog@logout');
+
+Route::get('bycript/{kode}',function($kode){
+    return bcrypt($kode);
+});

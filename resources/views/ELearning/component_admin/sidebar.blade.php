@@ -20,34 +20,36 @@
                         {{--<p>Dashboard</p>--}}
                     {{--</a>--}}
                 {{--</li>--}}
+                @if(!Session::get('id_siswa'))
+                    <li class="nav-item">
+                        <a href="{{ url('guru') }}" class="nav-link">
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>Guru</p>
+                        </a>
+                    </li>
 
-                <li class="nav-item">
-                    <a href="{{ url('guru') }}" class="nav-link">
-                        <i class="nav-icon fas fa-user"></i>
-                        <p>Guru</p>
-                    </a>
-                </li>
+                    <li class="nav-item">
+                        <a href="{{ url('siswa') }}" class="nav-link">
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>Siswa</p>
+                        </a>
+                    </li>
 
-                <li class="nav-item">
-                    <a href="{{ url('siswa') }}" class="nav-link">
-                        <i class="nav-icon fas fa-user"></i>
-                        <p>Siswa</p>
-                    </a>
-                </li>
+                    <li class="nav-item">
+                        <a href="{{ url('soal') }}" class="nav-link">
+                            <i class="nav-icon fas fa-book-open"></i>
+                            <p>Soal</p>
+                        </a>
+                    </li>
+                @else
+                    <li class="nav-item">
+                        <a href="{{ url('ujian') }}" class="nav-link">
+                            <i class="nav-icon fas fa-book-open"></i>
+                            <p>Ujian</p>
+                        </a>
+                    </li>
+                @endif
 
-                <li class="nav-item">
-                    <a href="{{ url('soal') }}" class="nav-link">
-                        <i class="nav-icon fas fa-book-open"></i>
-                        <p>Soal</p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="{{ url('ujian') }}" class="nav-link">
-                        <i class="nav-icon fas fa-book-open"></i>
-                        <p>Ujian</p>
-                    </a>
-                </li>
                 <li class="nav-item">
                     <a href="{{ url('log-out') }}" class="nav-link">
                         <i class="nav-icon fas fa-power-off"></i>

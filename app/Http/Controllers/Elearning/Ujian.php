@@ -8,13 +8,14 @@ use App\Model\Soal as tbl_soal;
 use App\Model\SiswaUjian;
 use App\Model\JawabanSiswa;
 use App\Model\KunciJawaban;
+use Session;
 
 class Ujian extends Controller
 {
     //
     public function index(){
-        $session_kode_siswa = '2020001201';
-        $session_id_siswa = '1';
+        $session_kode_siswa = Session::get('kode');
+        $session_id_siswa = Session::get('id_siswa');
         $data = [
           'kode'=> $session_kode_siswa,
           'id_siswa' => $session_id_siswa

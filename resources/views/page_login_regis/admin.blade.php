@@ -32,20 +32,20 @@
 	<div class="limiter">
 		<div class="container-login100">
 			<div class="wrap-login100">
-				<form action="{{ url('login-check') }}" method="post" class="login100-form validate-form">
+				<form action="{{ url('login-admin') }}" method="post" class="login100-form validate-form">
 					{{ csrf_field() }}
 					<span class="login100-form-title p-b-43">
-						Silahkan masuk.
+						Silahkan masuk admin.
 					</span>
 					@if(!empty(Session::get('message_error')))
 						<span style="color: red">
 							{{ Session::get('message_error') }}
 						</span>
 					@endif
-					<div class="wrap-input100 validate-input" data-validate = "Valid Kode is required: 123123">
-						<input class="input100" type="text" name="kode">
+					<div class="wrap-input100 validate-input" data-validate = "Valid Kode is required: asxz@zxc.com">
+						<input class="input100" type="email" name="email">
 						<span class="focus-input100"></span>
-						<span class="label-input100">Kode Siswa</span>
+						<span class="label-input100">email</span>
 					</div>
 
 					<div class="wrap-input100 validate-input" data-validate="Password is required">
