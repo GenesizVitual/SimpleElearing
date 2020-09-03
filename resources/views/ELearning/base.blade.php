@@ -92,4 +92,34 @@ scratch. This page gets rid of all links and provides the needed markup only.
 </body>
 @yield('jsContainer')
 @include('ELearning.component_admin.toast')
+  <script>
+      onSelected= function (id_siswa,no_urut, id, jawaban) {
+
+          const Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000
+          });
+
+          $.ajax({
+              url :'{{ url('jawab-ujian') }}',
+              type:'post',
+              data : {
+                  'id_siswa':id_siswa,
+                  'no_urut':no_urut,
+                  'id_kunci_jabawan':id,
+                  'jawaban':jawaban,
+                  '_token':'{{ csrf_token() }}',
+                  '_method':'put',
+              }, success:function (result) {
+                  Toast.fire({
+                      icon: result.status,
+                      title: result.message
+                  })
+              }
+          })
+      }
+  </script>
+
 </html>

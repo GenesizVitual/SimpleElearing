@@ -51,6 +51,13 @@
                     </a>
                 </li>
 
+                <li class="nav-item">
+                    <a href="{{ url('ujian') }}" class="nav-link">
+                        <i class="nav-icon fas fa-book-open"></i>
+                        <p>Ujian</p>
+                    </a>
+                </li>
+
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

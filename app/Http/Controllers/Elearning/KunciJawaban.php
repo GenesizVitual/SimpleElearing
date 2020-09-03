@@ -42,7 +42,7 @@ class KunciJawaban extends Controller
         foreach ($req->no_urut as $index=>$no_urut){
             $model = tbl_kunci_jabawan::updateOrCreate(
                 ['id_tema_soal'=> $req->id_kunci_jawaban,'no_urut'=> $no_urut],
-                ['jawaban'=> $req->input('kunci_jabawan_'.$index),'score'=>$req->skor_jabawan[$index]]
+                ['jawaban'=> $req->input('kunci_jabawan_'.$no_urut),'score'=>$req->skor_jabawan[$index]]
             );
         }
         return redirect('kunci-jawaban/'.$req->id_kunci_jawaban)->with('message_info','Kunci Jabawan telah dibuat');

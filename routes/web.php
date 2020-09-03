@@ -32,3 +32,8 @@ Route::get('lihat-dokumen-soal/{id}','Elearning\Soal@view_documen');
 Route::get('kunci-jawaban/{id}','Elearning\KunciJawaban@show');
 Route::post('store-jabawan','Elearning\KunciJawaban@store');
 Route::post('form-kunci-jawaban','Elearning\KunciJawaban@create');
+
+Route::get('ujian','Elearning\Ujian@index');
+Route::post('ikut-ujian','Elearning\Ujian@ikut_ujian');
+Route::put('jawab-ujian','Elearning\Ujian@jawab_ujian');
+Route::post('update-time','Elearning\Ujian@updateWaktuUjian');
