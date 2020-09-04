@@ -49,7 +49,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Pesan Soal</h4>
+                <h4 class="modal-title">Pesan Hasil Pengerjaan Soal</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -57,13 +57,13 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <h1 style="color: green; text-align: center;" id="jawaban_benar">Benar :</h1>
+                            <h1 style="color: black; text-align: center;" id="jawaban_benar">Benar :</h1>
                         </div>
                         <div class="col-md-6">
-                            <h1 style="color: red;text-align: center;" id="jawaban_salah">Salah</h1>
+                            <h1 style="color: black;text-align: center;" id="jawaban_salah">Salah</h1>
                         </div>
                         <div class="col-md-12">
-                            <h1 style="color: gold;text-align: center;" id="total_score">Score</h1>
+                            <h1 style="color: black;text-align: center;" id="total_score">Score</h1>
                         </div>
                     </div>
                 </div>

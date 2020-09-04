@@ -8,6 +8,7 @@ use App\Model\Guru;
 use App\Model\Siswa;
 use App\Model\Soal as tbl_soal;
 use App\Model\FileSoal;
+use App\Model\KunciJawaban;
 
 class Soal extends Controller
 {
@@ -121,6 +122,33 @@ class Soal extends Controller
     }
 
 
+    public function hasil_ujian($id)
+    {
+        $model =tbl_soal::findOrFail($id);
+        $row = array();
+        $no =1;
+
+        if(!empty($data=$model->linkToSiswaUjian)) {
+            foreach ($data as $data_siswa){
+                $colum = array();
+                $colum['no'] = $no++;
+                $colum['nama'] = $data_siswa->linkToSiswa->nama;
+                $colum['kode'] = $data_siswa->linkToSiswa->kode;
+                $colum['kelas'] = $data_siswa->linkToSiswa->kelas;
+                $colum['jenis_kelas'] = $data_siswa->linkToSiswa->jenis_kelas;
+                $colum['hasil'] = $this->nilai_ujian($data_siswa->linkToSiswa->id, $data_siswa->id_tema_soal);
+                $row[] = $colum;
+            }
+        }
+
+        $data =[
+            'data_ujian'=> $row,
+            'soal'=> $model
+        ];
+
+        return view('Elearning.report.hasil_ujian', $data);
+    }
+
     public function upload(Request $req){
         $this->validate($req,[
             'id_tema_soal'=>'required',
@@ -144,4 +172,29 @@ class Soal extends Controller
         return view('Elearning.Soal.view_dokumen', array('data'=> $model,'url'=>$url_file));
     }
 
+    public function nilai_ujian($id_siswa,$id_tema_soal){
+
+        $model = KunciJawaban::all()->where('id_tema_soal',$id_tema_soal)->sortBy('no_urut');
+        $row = array();
+        $jawaban_benar=0;
+        $jawaban_score=0;
+        $jawaban_salah=0;
+        foreach ($model as $data){
+            $data_jabawan_siswa = $data->linkToKunciJabawan->where('id_siswa', $id_siswa)->first();
+            if($data_jabawan_siswa->jawaban == $data->jawaban){
+                $jawaban_score +=  $data->score;
+                $jawaban_benar +=  1;
+            }else{
+                $jawaban_salah += 1;
+            }
+        }
+
+        $data = [
+            'jawaban_benar'=> $jawaban_benar,
+            'jawaban_salah'=> $jawaban_salah,
+            'jawaban_score'=> ($jawaban_score*$jawaban_benar)/$model->count(),
+        ];
+
+        return $data;
+    }
 }

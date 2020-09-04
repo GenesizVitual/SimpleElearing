@@ -91,6 +91,7 @@
                                                     <a class="dropdown-item" href="#" onclick="upload('{{ $data_soal->id }}')"><i class="fa fa-upload"></i> Embedend Soal</a>
                                                     <a class="dropdown-item" href="#" onclick="window.location.href='{{ url('lihat-dokumen-soal/'. $data_soal->id) }}' "><i class="fa fa-eye"></i> Lihat Soal</a>
                                                     <a class="dropdown-item" href="#" onclick="window.location.href='{{ url('kunci-jawaban/'. $data_soal->id) }}' "><i class="fa fa-key"></i> Kunci Jawaban</a>
+                                                    <a class="dropdown-item" href="#" onclick="window.location.href='{{ url('hasil-ujian/'. $data_soal->id) }}' "><i class="fa fa-book"></i> Hasil Ujian</a>
                                                     <hr>
                                                     <a class="dropdown-item" href="#" onclick="edit('{{ $data_soal->id }}')"><i class="fa fa-pen"></i> ubah</a>
                                                     <a class="dropdown-item" href="#" onclick="onDelete('{{ $data_soal->id }}')"><i class="fa fa-eraser"></i> hapus</a>

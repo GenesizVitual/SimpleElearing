@@ -19,6 +19,10 @@ class Soal extends Model
         return $this->hasOne('App\Model\FileSoal','id_tema_soal','id');
     }
 
+    public function linkToSiswaUjian(){
+        return $this->hasMany('App\Model\SiswaUjian','id_tema_soal','id');
+    }
+
     public function listToKunciJawaban(){
         return $this->hasMany('App\Model\KunciJawaban','id_tema_soal', 'id');
     }

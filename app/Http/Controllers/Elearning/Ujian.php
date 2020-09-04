@@ -46,8 +46,11 @@ class Ujian extends Controller
         );
 
 
-
-        $date_format = date('Y/m/d H:i:s', strtotime($model->waktu_mulai));
+        if($model->status==1){
+            $date_format = date('Y/m/d H:i:s', strtotime($model->waktu_mulai));
+        }else{
+            $date_format = date('Y/m/d H:i:s');
+        }
 
         $data = [
             'data_ujian'=>$mdoel_tema_ujian,
