@@ -35,8 +35,7 @@
                             <h3 class="card-title">Tabel Hasil Ujian</h3>
 
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" onclick=" $('#modal-default-proses').modal('show');" ><i class="fas fa-plus"></i>
-                                </button>
+                                <a href="{{ url('cetak-hasil-ujian/'.$id_soal) }}" class="btn btn-primary"><i class="fa fa-print"></i> Print </a>
                             </div>
                             <!-- /.card-tools -->
                         </div>
@@ -51,7 +50,7 @@
                                     <th rowspan="2">Kode</th>
                                     <th rowspan="2">Kelas</th>
                                     <th rowspan="2">Jenis kelas</th>
-                                    <th >Hasil</th>
+                                    <th colspan="3">Hasil</th>
                                 </tr>
                                 <tr>
                                     <th>Benar</th>

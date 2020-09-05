@@ -145,6 +145,8 @@
                                 <label for="exampleInputFile">Import Data Siswa</label>
                                 <div class="custom-file">
                                     <input type="file" class="form-control" name="file" id="customFile" required>
+                                    <span>*format excel siswa dapat didownload <a href="{{ asset('file/format_excel_siswa.xlsx') }}">disini</a></span>
+
                                 </div>
                             </div>
                     </div>

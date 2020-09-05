@@ -31,7 +31,8 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12" id="example1" style="width: 100%">
-                {!! $data->linkToFileSoal->nama_file !!}
+                <iframe id="frame" src="{{ $data->linkToFileSoal->nama_file }}" width="100%" height="500"></iframe>
+
             </div>
         </div>
     </div><!-- /.container-fluid -->

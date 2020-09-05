@@ -30,7 +30,7 @@
         Halaman Ini akan menampilkan semua data guru.
         <div class="row">
             <div class="col-md-12" style="padding-bottom: 10px">
-                <button type="button" class="btn btn-primary" style="width: 100%" data-toggle="modal" data-target="#modal-default-proses"> Import Data Guru </button>
+                <button type="button" class="btn btn-primary" style="width: 100%" data-toggle="modal" data-target="#modal-default"> Import Data Guru </button>
             </div>
             <div class="col-md-12">
                 <div class="card card-success">
@@ -101,11 +101,12 @@
                                 <label for="exampleInputFile">Import Data Guru</label>
                                 <div class="custom-file">
                                     <input type="file" class="form-control" name="file" id="customFile" required>
+                                    <span>*format excel guru dapat didownload <a href="{{ asset('file/format_excel_guru.xlsx') }}">disini</a></span>
                                 </div>
                             </div>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <small>Format file yang didukung adalah *xlc atau *csv. besar file 1.5 MB</small>
+                        <small>Format file yang didukung adalah *xlc dan ukuran besar file 1.5 MB</small>
                         <button type="submit" class="btn btn-success float-right">Proses</button>
                     </div>
                 </form>

@@ -30,7 +30,7 @@ class Ujian extends Controller
             'token'=> 'required',
         ]);
 
-        $data_tema_ujian = tbl_soal::where('status','1')->where('token',$req->token);
+        $data_tema_ujian = tbl_soal::where('status','1')->where('kelas', Session::get('kelas'))->where('jenis_kelas', Session::get('jenis_kelas'))->where('token',$req->token);
         if($data_tema_ujian->count() <= 0){
             return redirect()->back()->with('message_info','Token ujian yang anda masukan salah atau ujian yang anda ikuti belum dimulai');
         }
@@ -139,7 +139,7 @@ class Ujian extends Controller
         $jawaban_score=0;
         $jawaban_salah=0;
         foreach ($model as $data){
-            $data_jabawan_siswa = $data->linkToKunciJabawan->where('id_siswa', $req->id_siswa)->first();
+            $data_jabawan_siswa = $data->linkToKunciJabawan->where('no_urut', $data->no_urut)->where('id_siswa', $req->id_siswa)->first();
             if($data_jabawan_siswa->jawaban == $data->jawaban){
                 $jawaban_score +=  $data->score;
                 $jawaban_benar +=  1;

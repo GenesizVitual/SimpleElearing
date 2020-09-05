@@ -143,10 +143,40 @@ class Soal extends Controller
 
         $data =[
             'data_ujian'=> $row,
-            'soal'=> $model
+            'soal'=> $model,
+            'id_soal' =>$id
         ];
 
         return view('Elearning.report.hasil_ujian', $data);
+    }
+
+    public function cetak_hasil_ujian($id)
+    {
+        $model =tbl_soal::findOrFail($id);
+        $row = array();
+        $no =1;
+
+        if(!empty($data=$model->linkToSiswaUjian)) {
+            foreach ($data as $data_siswa){
+                $colum = array();
+                $colum['no'] = $no++;
+                $colum['nama'] = $data_siswa->linkToSiswa->nama;
+                $colum['kode'] = $data_siswa->linkToSiswa->kode;
+                $colum['kelas'] = $data_siswa->linkToSiswa->kelas;
+                $colum['jenis_kelas'] = $data_siswa->linkToSiswa->jenis_kelas;
+                $colum['hasil'] = $this->nilai_ujian($data_siswa->linkToSiswa->id, $data_siswa->id_tema_soal);
+                $row[] = $colum;
+            }
+        }
+
+        $data =[
+            'data_ujian'=> $row,
+            'soal'=> $model,
+            'id_soal' =>$id,
+            'data_soal' =>$model
+        ];
+
+        return view('Elearning.report.cetak_hasil_ujian', $data);
     }
 
     public function upload(Request $req){
@@ -180,7 +210,7 @@ class Soal extends Controller
         $jawaban_score=0;
         $jawaban_salah=0;
         foreach ($model as $data){
-            $data_jabawan_siswa = $data->linkToKunciJabawan->where('id_siswa', $id_siswa)->first();
+            $data_jabawan_siswa = $data->linkToKunciJabawan->where('no_urut',$data->no_urut)->where('id_siswa', $id_siswa)->first();
             if($data_jabawan_siswa->jawaban == $data->jawaban){
                 $jawaban_score +=  $data->score;
                 $jawaban_benar +=  1;

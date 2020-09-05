@@ -36,7 +36,7 @@
 
             <div class="col-md-12" id="example1" style="width: 100%">
                 {{--{!! $data_ujian->linkToFileSoal->nama_file !!}--}}
-                <iframe src="{{ $data_ujian->linkToFileSoal->nama_file }}" width="100%" height="500"></iframe>
+                <iframe id="frame" src="{{ $data_ujian->linkToFileSoal->nama_file }}" width="100%" height="500"></iframe>
             </div>
 
         </div>
@@ -161,6 +161,8 @@
                         '_token':'{{ csrf_token() }}'
                     },success:function (result) {
                        console.log(result.jawaban_benar);
+                        var frame = document.getElementById("frame");
+                        frame.parentNode.removeChild(frame);
                         $('#modal-default').modal('show')
                        $('#jawaban_benar').text('Benar :'+result.jawaban_benar);
                        $('#jawaban_salah').text('Salah :'+result.jawaban_salah);

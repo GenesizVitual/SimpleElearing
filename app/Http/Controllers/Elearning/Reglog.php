@@ -29,7 +29,9 @@ class Reglog extends Controller
         $model = Siswa::where('kode',$req->kode)->first();
         if(Hash::check($req->pass, $model->password)){
             $req->session()->put('kode', $model->kode);
-            $req->session()->put('nama', $model->dashboard);
+            $req->session()->put('nama', $model->nama);
+            $req->session()->put('kelas', $model->kelas);
+            $req->session()->put('jenis_kelas', $model->jenis_kelas);
             $req->session()->put('id_siswa', $model->id);
             return redirect('ujian')->with('message_success','Selamat Datang '.$model->nama);
         }else{

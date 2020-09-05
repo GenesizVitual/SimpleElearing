@@ -66,11 +66,11 @@
 						</button>
 					</div>
 					
-					<div class="text-center p-t-46 p-b-20">
-						<span class="txt2">
-							or <a href="{{ url('register') }}">sign up</a>
-						</span>
-					</div>
+					{{--<div class="text-center p-t-46 p-b-20">--}}
+						{{--<span class="txt2">--}}
+							{{--or <a href="{{ url('register') }}">sign up</a>--}}
+						{{--</span>--}}
+					{{--</div>--}}
 
 				</form>
 
