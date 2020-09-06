@@ -38,7 +38,7 @@
                     <!-- /.card-header -->
                     <div class="card-body">
                         Halaman Ini adalah untuk memasukan kunci jawaban anda.
-                        <button type="button" class="btn btn-primary" onclick="kunci_jawaban('{{ $id_tema_soal }}')">Tambah Kucin Jawaban</button>
+                        <button type="button" class="btn btn-primary" onclick="kunci_jawaban('{{ $id_tema_soal }}')">Tambah Kunci Jawaban</button>
                         <form action="{{ url('store-jabawan') }}" method="post">
                             {{ csrf_field() }}
                             <input type="hidden" value="{{ $id_tema_soal }}" name="id_kunci_jawaban">
@@ -63,7 +63,7 @@
                                             <th>{{ $no++ }}</th>
                                             <th>
                                                 @foreach($option as $key=>$data)
-                                                    <input name="kunci_jabawan_{{ $i }}" @if($data_tbl->jawaban==$data) checked @endif type="radio" value="{{ $data }}" required> {{ $data }}
+                                                    <input name="kunci_jabawan_{{ $no_urut }}" @if($data_tbl->jawaban==$data) checked @endif type="radio" value="{{ $data }}" required> {{ $data }}
                                                 @endforeach
                                             </th>
                                             <th>

@@ -88,6 +88,7 @@ class Soal extends Controller
             'id'=>'required',
         ]);
         $model =tbl_soal::findOrFail($req->id);
+
         if($model->status == 1){
             $model->status = '0';
         }else{
@@ -124,6 +125,48 @@ class Soal extends Controller
 
     public function hasil_ujian($id)
     {
+        $data = $this->data_hasil_ujian($id);
+        return view('Elearning.report.hasil_ujian',$data);
+    }
+
+    public function halaman_monitoring_ujian($id)
+    {
+        $data =[
+            'id_tema_soal'=> $id
+        ];
+        return view('Elearning.report.monitoring_hasil_ujian', $data);
+    }
+
+    public function halaman_monitoring_semua_ujian()
+    {
+        return view('Elearning.report.monitoring_semua_hasil_ujian');
+    }
+
+    public function data_hasil_ujian_api(Request $req)
+    {
+        $this->validate($req,[
+            'id_tema_soal'=>'required',
+            '_token'=> 'required'
+        ]);
+        $id = $req->id_tema_soal;
+        $data = $this->data_hasil_ujian($id);
+        return response()->json($data);
+    }
+
+    public function data_semua_hasil_ujian(Request $request){
+        $this->validate($request,[
+            '_token'=> 'required'
+        ]);
+
+        $array=array();
+        $model = tbl_soal::all()->where('status',1);
+        foreach ($model as $data){
+            $array[] = $this->data_hasil_ujian($data->id)['data_ujian'];
+        }
+        return response()->json(array('data_ujian'=>$array));
+    }
+
+    public function data_hasil_ujian($id){
         $model =tbl_soal::findOrFail($id);
         $row = array();
         $no =1;
@@ -136,7 +179,11 @@ class Soal extends Controller
                 $colum['kode'] = $data_siswa->linkToSiswa->kode;
                 $colum['kelas'] = $data_siswa->linkToSiswa->kelas;
                 $colum['jenis_kelas'] = $data_siswa->linkToSiswa->jenis_kelas;
-                $colum['hasil'] = $this->nilai_ujian($data_siswa->linkToSiswa->id, $data_siswa->id_tema_soal);
+
+                $hasil = $this->nilai_ujian($data_siswa->linkToSiswa->id, $data_siswa->id_tema_soal);
+                $colum['jawaban_benar'] = $hasil['jawaban_benar'];
+                $colum['jawaban_salah'] = $hasil['jawaban_salah'];
+                $colum['jawaban_score'] = $hasil['jawaban_score'];
                 $row[] = $colum;
             }
         }
@@ -147,7 +194,7 @@ class Soal extends Controller
             'id_soal' =>$id
         ];
 
-        return view('Elearning.report.hasil_ujian', $data);
+        return $data;
     }
 
     public function cetak_hasil_ujian($id)
@@ -203,28 +250,73 @@ class Soal extends Controller
     }
 
     public function nilai_ujian($id_siswa,$id_tema_soal){
-
         $model = KunciJawaban::all()->where('id_tema_soal',$id_tema_soal)->sortBy('no_urut');
         $row = array();
+        $jawaban_benar_score=0;
         $jawaban_benar=0;
         $jawaban_score=0;
         $jawaban_salah=0;
+
+        $total_score = 0;
+
         foreach ($model as $data){
-            $data_jabawan_siswa = $data->linkToKunciJabawan->where('no_urut',$data->no_urut)->where('id_siswa', $id_siswa)->first();
+            if(!empty($data->linkToKunciJabawan)){
+            $data_jabawan_siswa = $data->linkToKunciJabawan->where('no_urut', $data->no_urut)->where('id_siswa', $id_siswa)->first();
             if($data_jabawan_siswa->jawaban == $data->jawaban){
                 $jawaban_score +=  $data->score;
+                $jawaban_benar_score +=  $data->score;
                 $jawaban_benar +=  1;
+                $total_score += $data->score;
             }else{
                 $jawaban_salah += 1;
+                $total_score += $data->score;
+            }
             }
         }
 
         $data = [
             'jawaban_benar'=> $jawaban_benar,
             'jawaban_salah'=> $jawaban_salah,
-            'jawaban_score'=> ($jawaban_score*$jawaban_benar)/$model->count(),
+            'jawaban_score'=> abs($jawaban_benar_score),
         ];
 
+
         return $data;
+    }
+
+
+    private function array_sort($array, $on, $order=SORT_ASC)
+    {
+        $new_array = array();
+        $sortable_array = array();
+
+        if (count($array) > 0) {
+            foreach ($array as $k => $v) {
+                if (is_array($v)) {
+                    foreach ($v as $k2 => $v2) {
+                        if ($k2 == $on) {
+                            $sortable_array[$k] = $v2;
+                        }
+                    }
+                } else {
+                    $sortable_array[$k] = $v;
+                }
+            }
+
+            switch ($order) {
+                case SORT_ASC:
+                    asort($sortable_array);
+                    break;
+                case SORT_DESC:
+                    arsort($sortable_array);
+                    break;
+            }
+
+            foreach ($sortable_array as $k => $v) {
+                $new_array[$k] = $array[$k];
+            }
+        }
+
+        return $new_array;
     }
 }

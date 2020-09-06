@@ -11,14 +11,9 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Hasil Ujian</h1>
+                    <h1 class="m-0 text-dark">Monitoring Hasil Ujian</h1>
                 </div><!-- /.col -->
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Hasil Ujian</li>
-                    </ol>
-                </div><!-- /.col -->
+
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
@@ -27,16 +22,13 @@
     <!-- Main content -->
     <div class="content">
         <div class="container-fluid">
-            Halaman ini adalah halaman untuk menampilkan semua siswa yang masuk ujian.
+            Halaman ini adalah halaman untuk menampilkan semua siswa yang masih dalam pengerjaan ujian.
             <div class="row">
                 <div class="col-md-12">
                     <div class="card card-success">
                         <div class="card-header">
                             <h3 class="card-title">Tabel Hasil Ujian</h3>
 
-                            <div class="card-tools">
-                                <a href="{{ url('cetak-hasil-ujian/'.$id_soal) }}" class="btn btn-primary"><i class="fa fa-print"></i> Print </a>
-                            </div>
                             <!-- /.card-tools -->
                         </div>
                         <!-- /.card-header -->
@@ -45,7 +37,7 @@
                             <table id="table-data" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
-                                    <th rowspan="2">#</th>
+                                    {{--<th rowspan="2">#</th>--}}
                                     <th rowspan="2">Nama</th>
                                     <th rowspan="2">Kode</th>
                                     <th rowspan="2">Kelas</th>
@@ -59,21 +51,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @php($no=1)
-                                @if(!empty($data_ujian))
-                                    @foreach($data_ujian as $data)
-                                        <tr>
-                                            <th >{{ $data['no'] }}</th>
-                                            <th>{{ $data['nama'] }}</th>
-                                            <th>{{ $data['kode'] }}</th>
-                                            <th>{{ $data['kelas'] }}</th>
-                                            <th>{{ $data['jenis_kelas'] }}</th>
-                                            <td>{{ $data['jawaban_benar'] }}</td>
-                                            <td>{{ $data['jawaban_salah'] }}</td>
-                                            <td>{{ $data['jawaban_score'] }}</td>
-                                        </tr>
-                                    @endforeach
-                                @endif
+
                                 </tbody>
                             </table>
                         </div>
@@ -100,7 +78,7 @@
 
     <script>
         $(function () {
-            $('#table-data').DataTable({
+            var table=$('#table-data').DataTable({
                 "paging": true,
                 "lengthChange": false,
                 "searching": true,
@@ -108,9 +86,38 @@
                 "info": true,
                 "autoWidth": false,
                 "responsive": true,
+                "data":[],
+                "columns":[
+//                    {'data' :'no'},
+                    {'data' :'nama'},
+                    {'data' :'kode'},
+                    {'data' :'kelas'},
+                    {'data' :'jenis_kelas'},
+                    {'data' :'jawaban_benar'},
+                    {'data' :'jawaban_salah'},
+                    {'data' :'jawaban_score'},
+                ],
+                "order": [[ 6, "desc" ]]
             });
+                
+            datable_show = function () {
+                $.ajax({
+                    url:'{{ url('monitoring-hasil-ujian-aktif-api') }}',
+                    type: 'post',
+                    data:{
+                        '_token':'{{ csrf_token() }}'
+                    }
+                }).done(function (result) {
+                    table.clear().draw();
+                    $.each(result.data_ujian, function (i,v) {
+                        table.rows.add(v).draw();
+                    })
 
+                })
+            }
 
+            datable_show();
+            setInterval("datable_show();",3000)
         });
     </script>
 @stop

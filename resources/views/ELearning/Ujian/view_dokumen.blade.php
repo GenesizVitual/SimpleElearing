@@ -16,11 +16,7 @@
                 <h2 style="text-align: center" id="demo">Waktu Ujian Dimulai</h2>
             </div><!-- /.col -->
             <div class="col-sm-3">
-               <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item ">Dokumen Soal</li>
-
-                </ol>
+              <button type="button" class="btn btn-danger float-right" onclick="tutup_ujian()">Akhiri Ujian</button>
             </div><!-- /.col -->
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -160,7 +156,7 @@
                         'id_tema_soal': '{{ $id_tema_siswa }}',
                         '_token':'{{ csrf_token() }}'
                     },success:function (result) {
-                       console.log(result.jawaban_benar);
+                       console.log(result);
                         var frame = document.getElementById("frame");
                         frame.parentNode.removeChild(frame);
                         $('#modal-default').modal('show')
@@ -170,6 +166,15 @@
 
                     }
                 })
+            }
+
+            tutup_ujian = function () {
+                if(confirm('Apakah anda akan mengakhiri ujian ini ... ?')){
+                    update_status();
+                    result();
+                }else{
+                    alert('Ujian dilanjutkan');
+                }
             }
         </script>
 @stop

@@ -40,6 +40,10 @@ Route::middleware([AdminCheck::class])->group(function(){
     Route::post('upload-soal','Elearning\Soal@upload');
     Route::get('lihat-dokumen-soal/{id}','Elearning\Soal@view_documen');
     Route::get('hasil-ujian/{id}','Elearning\Soal@hasil_ujian');
+    Route::get('monitor-ujian/{id}','Elearning\Soal@halaman_monitoring_ujian');
+    Route::post('data-monitor-ujian','Elearning\Soal@data_hasil_ujian_api');
+    Route::get('monitoring-hasil-ujian-aktif','Elearning\Soal@halaman_monitoring_semua_ujian');
+    Route::post('monitoring-hasil-ujian-aktif-api','Elearning\Soal@data_semua_hasil_ujian');
     Route::get('cetak-hasil-ujian/{id}','Elearning\Soal@cetak_hasil_ujian');
 
 

@@ -106,7 +106,7 @@
                             </div>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <small>Format file yang didukung adalah *xlc dan ukuran besar file 1.5 MB</small>
+                        <small>Format file yang didukung adalah *xlsx dan ukuran besar file 1.5 MB</small>
                         <button type="submit" class="btn btn-success float-right">Proses</button>
                     </div>
                 </form>

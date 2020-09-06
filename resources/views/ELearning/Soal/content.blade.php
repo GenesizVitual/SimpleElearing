@@ -42,6 +42,7 @@
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
+                        <p><a href="{{ url('monitoring-hasil-ujian-aktif') }}">Monitoring Semua Ujian Yang Aktif</a></p>
                         <table id="table-data" class="table table-bordered table-striped">
                             <thead>
                             <tr>
@@ -69,12 +70,11 @@
                                     <td>{{ $data_soal->token }}</td>
                                     <td>
                                         <div class="form-group">
-                                            <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                                                <input type="checkbox" class="custom-control-input" onclick="onClicks('{{$data_soal->id}}')" @if($data_soal->status==1) checked value="0" @else value="1" @endif id="customSwitch3">
-                                                <label class="custom-control-label" for="customSwitch3" id="label_status">@if($data_soal->status==0) Non Aktif @else Aktif @endif</label>
+                                            <button type="button"  onclick="ubah_status_aktif({{ $data_soal->id }})" @if($data_soal->status==0) class="btn btn-danger" @else class="btn btn-success"  @endif>
+                                                @if($data_soal->status==0) Tidak Aktif @else Aktif  @endif
+                                            </button><br>
 
-                                            </div>
-                                            @if(!empty($data_soal->linkToFileSoal->nama_file))
+                                        @if(!empty($data_soal->linkToFileSoal->nama_file))
                                                 <small style="color: green;">Soal Telah terhubung</small>
                                             @else
                                                 <small style="color:red">Dokumen belum tersedia</small>
@@ -92,6 +92,7 @@
                                                     <a class="dropdown-item" href="#" onclick="window.location.href='{{ url('lihat-dokumen-soal/'. $data_soal->id) }}' "><i class="fa fa-eye"></i> Lihat Soal</a>
                                                     <a class="dropdown-item" href="#" onclick="window.location.href='{{ url('kunci-jawaban/'. $data_soal->id) }}' "><i class="fa fa-key"></i> Kunci Jawaban</a>
                                                     <a class="dropdown-item" href="#" onclick="window.location.href='{{ url('hasil-ujian/'. $data_soal->id) }}' "><i class="fa fa-book"></i> Hasil Ujian</a>
+                                                    <a class="dropdown-item" href="#" onclick="window.open('{{ url('monitor-ujian/'. $data_soal->id) }}','_blank') " ><i class="fa fa-eye"></i> Monitoring Ujian</a>
                                                     <hr>
                                                     <a class="dropdown-item" href="#" onclick="edit('{{ $data_soal->id }}')"><i class="fa fa-pen"></i> ubah</a>
                                                     <a class="dropdown-item" href="#" onclick="onDelete('{{ $data_soal->id }}')"><i class="fa fa-eraser"></i> hapus</a>
@@ -264,7 +265,7 @@
                 });
             }
 
-            onClicks = function (id) {
+            ubah_status_aktif = function (id) {
                 $.ajax({
                     url:'{{ url('statu-update') }}',
                     type:'post',

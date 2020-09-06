@@ -35,10 +35,12 @@ class KunciJawaban extends Controller
     }
 
     public function store(Request $req){
+
         $this->validate($req,[
             'id_kunci_jawaban'=> 'required',
         ]);
-//        dd($req->all());
+
+
         foreach ($req->no_urut as $index=>$no_urut){
             $model = tbl_kunci_jabawan::updateOrCreate(
                 ['id_tema_soal'=> $req->id_kunci_jawaban,'no_urut'=> $no_urut],

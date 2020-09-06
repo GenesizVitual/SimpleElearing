@@ -46,9 +46,14 @@ class Ujian extends Controller
         );
 
 
+
         if($model->status==1){
             $date_format = date('Y/m/d H:i:s', strtotime($model->waktu_mulai));
         }else{
+            $date_format = date('Y/m/d H:i:s');
+        }
+
+        if($model->status ==2){
             $date_format = date('Y/m/d H:i:s');
         }
 
@@ -135,23 +140,30 @@ class Ujian extends Controller
 
         $model = KunciJawaban::all()->where('id_tema_soal',$req->id_tema_soal)->sortBy('no_urut');
         $row = array();
+        $jawaban_benar_score=0;
         $jawaban_benar=0;
         $jawaban_score=0;
         $jawaban_salah=0;
+
+        $total_score = 0;
+
         foreach ($model as $data){
             $data_jabawan_siswa = $data->linkToKunciJabawan->where('no_urut', $data->no_urut)->where('id_siswa', $req->id_siswa)->first();
             if($data_jabawan_siswa->jawaban == $data->jawaban){
                 $jawaban_score +=  $data->score;
+                $jawaban_benar_score +=  $data->score;
                 $jawaban_benar +=  1;
+                $total_score += $data->score;
             }else{
                 $jawaban_salah += 1;
+                $total_score += $data->score;
             }
         }
 
         $data = [
             'jawaban_benar'=> $jawaban_benar,
             'jawaban_salah'=> $jawaban_salah,
-            'jawaban_score'=> ($jawaban_score*$jawaban_benar)/$model->count(),
+            'jawaban_score'=> abs($jawaban_benar_score),
         ];
 
         return response()->json($data);
