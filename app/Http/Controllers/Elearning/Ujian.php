@@ -64,6 +64,8 @@ class Ujian extends Controller
             'id_siswa_ujian'=> $model->id,
             'kode_siswa'=> $req->kode_siswa,
             'count_down_time'=>strtotime($date_format),
+            'date'=> intval(date('d', strtotime($date_format))),
+            'month'=> intval(date('m', strtotime($date_format))),
             'jam'=> intval(date('H', strtotime($date_format))),
             'minute'=> intval(date('i', strtotime($date_format))),
         ];

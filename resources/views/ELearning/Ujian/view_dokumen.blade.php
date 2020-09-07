@@ -79,13 +79,16 @@
 
             // Set the date we're counting down to
             var today = new Date();
-            var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+            today.setDate(parseInt('{{ $date }}'));
+            today.setMonth(parseInt('{{ $month }}'));
+
+            var date = today.getFullYear()+'-'+(today.getMonth() )+'-'+today.getDate();
             today.setHours(parseInt('{{ $jam }}'));
             today.setMinutes(parseInt('{{ $minute }}'));
             var time =  today.getHours()+ ":" + today.getMinutes() + ":" + today.getSeconds();
 
             var current_date = date+' '+time;
-
+            console.log(current_date);
             var countDownDate = new Date(current_date).getTime();
 
             // Update the count down every 1 second

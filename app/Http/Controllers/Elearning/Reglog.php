@@ -26,16 +26,21 @@ class Reglog extends Controller
             'pass'=> 'required',
         ]);
 
-        $model = Siswa::where('kode',$req->kode)->first();
-        if(Hash::check($req->pass, $model->password)){
-            $req->session()->put('kode', $model->kode);
-            $req->session()->put('nama', $model->nama);
-            $req->session()->put('kelas', $model->kelas);
-            $req->session()->put('jenis_kelas', $model->jenis_kelas);
-            $req->session()->put('id_siswa', $model->id);
-            return redirect('ujian')->with('message_success','Selamat Datang '.$model->nama);
+        $model = Siswa::where('kode',$req->kode);
+        if($model->count() > 0){
+            $data = $model->first();
+            if(Hash::check($req->pass, $data->password)){
+                $req->session()->put('kode', $data->kode);
+                $req->session()->put('nama', $data->nama);
+                $req->session()->put('kelas', $data->kelas);
+                $req->session()->put('jenis_kelas', $data->jenis_kelas);
+                $req->session()->put('id_siswa', $data->id);
+                return redirect('ujian')->with('message_success','Selamat Datang '.$data->nama);
+            }else{
+                return redirect()->back()->with('message_error','Maaf, Email atau password anda salah. silahkah coba lagi');
+            }
         }else{
-            return redirect('login')->with('message_error','Maaf, Email atau password anda salah. silahkah coba lagi');
+            return redirect()->back()->with('message_error','Maaf, Email atau password anda salah. silahkah coba lagi');
         }
 
     }
@@ -46,14 +51,20 @@ class Reglog extends Controller
             'pass'=> 'required',
         ]);
 
-        $model = User::where('email',$req->email)->first();
-        if(Hash::check($req->pass, $model->password)){
-            $req->session()->put('id', $model->id);
-            $req->session()->put('username', $model->username);
-            return redirect('guru')->with('message_success','Selamat Datang '.$model->username);
+        $model = User::where('email',$req->email);
+        if($model->count()>0){
+            $data = $model->first();
+            if(Hash::check($req->pass, $data->password)){
+                $req->session()->put('id', $data->id);
+                $req->session()->put('username', $data->username);
+                return redirect('guru')->with('message_success','Selamat Datang '.$data->username);
+            }else{
+                return redirect()->back()->with('message_error','Maaf, Email atau password anda salah. silahkah coba lagi');
+            }
         }else{
             return redirect()->back()->with('message_error','Maaf, Email atau password anda salah. silahkah coba lagi');
         }
+
 
     }
 
