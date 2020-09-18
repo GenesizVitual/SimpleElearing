@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Session;
 
-class SiswaCheck
+class CheckGuru
 {
     /**
      * Handle an incoming request.
@@ -16,7 +16,7 @@ class SiswaCheck
      */
     public function handle($request, Closure $next)
     {
-        if(empty(Session::get('id_siswa'))){
+        if(empty(Session::get('id_guru'))){
             return redirect('/');
         }
 

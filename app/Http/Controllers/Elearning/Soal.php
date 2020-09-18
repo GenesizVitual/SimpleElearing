@@ -9,6 +9,7 @@ use App\Model\Siswa;
 use App\Model\Soal as tbl_soal;
 use App\Model\FileSoal;
 use App\Model\KunciJawaban;
+use Session;
 
 class Soal extends Controller
 {
@@ -17,11 +18,16 @@ class Soal extends Controller
     {
         $group_kelas = Siswa::all()->groupBy('kelas');
         $group_jenis_kelas = Siswa::all()->groupBy('jenis_kelas');
+        if(!empty(Session::get('id_guru'))){
+            $soal=tbl_soal::all()->where('id_guru', Session::get('id_guru'));
+        }else{
+            $soal=tbl_soal::all();
+        }
         $data=[
             'guru'=> Guru::all(),
             'group_jenis_kelas'=> $group_jenis_kelas,
             'group_kelas'=> $group_kelas,
-            'data'=> tbl_soal::all()
+            'data'=>$soal
         ];
         return view('ELearning.Soal.content', $data);
     }
@@ -117,6 +123,7 @@ class Soal extends Controller
         }
     }
 
+    //================================== Batas Soal ====================================================================
     function unique_code($limit)
     {
         return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);

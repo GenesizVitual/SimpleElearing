@@ -88,7 +88,7 @@
                                             <button type="button" class="btn btn-info dropdown-toggle dropdown-hover dropdown-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <span class="sr-only">Toggle Dropdown</span>
                                                 <div class="dropdown-menu dropdown-menu-right" role="menu" style="">
-                                                    <a class="dropdown-item" href="#" onclick="upload('{{ $data_soal->id }}')"><i class="fa fa-upload"></i> Embedend Soal</a>
+                                                    <a class="dropdown-item" href="#" onclick="window.location.href='{{ url('daftar-soal/'.$data_soal->id) }}'"><i class="fa fa-upload"></i> Soal</a>
                                                     <a class="dropdown-item" href="#" onclick="window.location.href='{{ url('lihat-dokumen-soal/'. $data_soal->id) }}' "><i class="fa fa-eye"></i> Lihat Soal</a>
                                                     <a class="dropdown-item" href="#" onclick="window.location.href='{{ url('kunci-jawaban/'. $data_soal->id) }}' "><i class="fa fa-key"></i> Kunci Jawaban</a>
                                                     <a class="dropdown-item" href="#" onclick="window.location.href='{{ url('hasil-ujian/'. $data_soal->id) }}' "><i class="fa fa-book"></i> Hasil Ujian</a>

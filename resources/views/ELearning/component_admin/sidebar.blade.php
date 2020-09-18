@@ -20,7 +20,7 @@
                         {{--<p>Dashboard</p>--}}
                     {{--</a>--}}
                 {{--</li>--}}
-                @if(!Session::get('id_siswa'))
+                @if(!empty(Session::get('id')))
                     <li class="nav-item">
                         <a href="{{ url('guru') }}" class="nav-link">
                             <i class="nav-icon fas fa-user"></i>
@@ -34,14 +34,18 @@
                             <p>Siswa</p>
                         </a>
                     </li>
+                @endif
 
+                @if(!empty(Session::get('id_guru')))
                     <li class="nav-item">
                         <a href="{{ url('soal') }}" class="nav-link">
                             <i class="nav-icon fas fa-book-open"></i>
                             <p>Soal</p>
                         </a>
                     </li>
-                @else
+                @endif
+
+                @if(!empty(Session::get('id_siswa')))
                     <li class="nav-item">
                         <a href="{{ url('ujian') }}" class="nav-link">
                             <i class="nav-icon fas fa-book-open"></i>
