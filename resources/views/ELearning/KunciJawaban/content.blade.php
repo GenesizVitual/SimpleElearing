@@ -76,7 +76,6 @@
                                 @endif
 
                                 @while($no_urut <= $banyak_soal)
-
                                     <tr>
                                         <th>{{ $no++ }}</th>
                                         <th>

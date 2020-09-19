@@ -67,7 +67,7 @@ Route::middleware([CheckGuru::class])->group(function(){
 
     Route::put('statu-update','Elearning\Soal@status');
     Route::post('upload-soal','Elearning\Soal@upload');
-    Route::get('lihat-dokumen-soal/{id}','Elearning\Soal@view_documen');
+    Route::get('lihat-dokumen-soal/{id}','Elearning\DaftarSoal@view_documen');
     Route::get('hasil-ujian/{id}','Elearning\Soal@hasil_ujian');
     Route::get('monitor-ujian/{id}','Elearning\Soal@halaman_monitoring_ujian');
     Route::post('data-monitor-ujian','Elearning\Soal@data_hasil_ujian_api');

@@ -51,7 +51,7 @@
                                 <th>Judul Soal</th>
                                 <th>Jenis Kelas</th>
                                 <th>Kelas</th>
-                                <th>Waktu</th>
+                                <th>Total Waktu</th>
                                 <th>Token</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
@@ -66,7 +66,11 @@
                                     <td>{{ $data_soal->judul_soal }}</td>
                                     <td>{{ $data_soal->jenis_kelas }}</td>
                                     <td>{{ $data_soal->kelas }}</td>
-                                    <td>{{ $data_soal->time }}</td>
+                                    <td>
+                                        @if(!empty($data_soal->linkToDaftarSoal))
+
+                                        @endif
+                                    </td>
                                     <td>{{ $data_soal->token }}</td>
                                     <td>
                                         <div class="form-group">
@@ -198,10 +202,10 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label>Waktu Ujian</label>
-                            <input type="time" class="form-control" name="time" required>
-                        </div>
+                        {{--<div class="form-group">--}}
+                            {{--<label>Waktu Ujian</label>--}}
+                            {{--<input type="time" class="form-control" name="time" required>--}}
+                        {{--</div>--}}
                     </div>
                     <div class="modal-footer justify-content-between">
                         <small>Isilah data tema soal dengan sebenar-benarnya</small>
@@ -258,7 +262,7 @@
                         $('[name="jenis_kelas"]').val(result.jenis_kelas).trigger('change');
                         $('[name="kelas"]').val(result.kelas).trigger('change');
                         $('[name="_method"]').val("put");
-                        $('[name="time"]').val(result.time);
+//                        $('[name="time"]').val(result.time);
                         $('#form').attr('action','{{ url('soal') }}/'+id);
                         $('#modal-default-proses').modal('show');
                     }

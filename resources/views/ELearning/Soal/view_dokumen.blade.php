@@ -30,10 +30,43 @@
 <div class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12" id="example1" style="width: 100%">
-                <iframe id="frame" src="{{ $data->linkToFileSoal->nama_file }}" width="100%" height="500"></iframe>
+            @if(!empty($data->linkToDaftarSoal))
+                @php($no=1)
+                @foreach($data->linkToDaftarSoal->sortBy('no_urut') as $soal)
+                    <div class="col-md-12">
+                        <div class="card card-success">
+                            <div class="card-header">
+                                <h3 class="card-title">Soal No. {{ $no++ }}</h3>
+                                <!-- /.card-tools -->
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table style="width: 100%">
+                                    <tr>
+                                        <td colspan="2">{!! $soal->soal !!}</td>
+                                    </tr>
+                                    @if(!empty($soal->linkToPilihan))
+                                        @foreach($soal->linkToPilihan->sortBy('label') as $data)
+                                            <tr
+                                                @if(!empty($soal->linkToJawaban))
+                                                        @if($soal->linkToJawaban->jawaban==$data->label)
+                                                            style="background-color: lawngreen"
+                                                        @endif
+                                                @endif
+                                            >
+                                                <td style="width: 15px">{{ $data->label }}).</td>
+                                                <td>{{ $data->text }} </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
 
-            </div>
+                    </div>
+                @endforeach
+            @endif
         </div>
     </div><!-- /.container-fluid -->
 </div>

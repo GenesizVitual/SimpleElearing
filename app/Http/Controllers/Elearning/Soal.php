@@ -20,11 +20,13 @@ class Soal extends Controller
         $group_jenis_kelas = Siswa::all()->groupBy('jenis_kelas');
         if(!empty(Session::get('id_guru'))){
             $soal=tbl_soal::all()->where('id_guru', Session::get('id_guru'));
+            $guru = Guru::all()->where('id',Session::get('id_guru'));
         }else{
             $soal=tbl_soal::all();
+            $guru = Guru::all();
         }
         $data=[
-            'guru'=> Guru::all(),
+            'guru'=> $guru,
             'group_jenis_kelas'=> $group_jenis_kelas,
             'group_kelas'=> $group_kelas,
             'data'=>$soal
@@ -69,7 +71,7 @@ class Soal extends Controller
             'judul_soal'=>'required',
             'jenis_kelas'=>'required',
             'kelas'=>'required',
-            'time'=>'required',
+//            'time'=>'required',
         ]);
 
 
@@ -78,7 +80,7 @@ class Soal extends Controller
         $model->judul_soal = $req->judul_soal;
         $model->jenis_kelas = $req->jenis_kelas;
         $model->kelas = $req->kelas;
-        $model->time = $req->time;
+//        $model->time = $req->time;
         if($model->save()){
             return redirect()->back()->with('message_success','Anda telah mengubah item tema soal dengan nama :'.$model->judul_soal);
         }else{

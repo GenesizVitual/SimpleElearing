@@ -114,70 +114,70 @@
                 if (distance < 0) {
                     clearInterval(x);
                     document.getElementById("demo").innerHTML = "Waktu Pengerjaan Telah Berakhir";
-//                    update_status();
-//                    result();
+                    update_status();
+                    result();
                 }
 
             }, 1000);
 
 
-            {{--update_status = function () {--}}
+            update_status = function () {
 
-                {{--const Toast = Swal.mixin({--}}
-                    {{--toast: true,--}}
-                    {{--position: 'top-end',--}}
-                    {{--showConfirmButton: false,--}}
-                    {{--timer: 3000--}}
-                {{--});--}}
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
 
-                {{--$.ajax({--}}
-                    {{--url:'{{ url('update-status') }}',--}}
-                    {{--type:'post',--}}
-                    {{--data:{--}}
-                        {{--'id_siswa': '{{$id_siswa }}',--}}
-                        {{--'id_tema_soal': '{{ $id_tema_siswa }}',--}}
-                        {{--'_token':'{{ csrf_token() }}'--}}
-                    {{--},success:function (result) {--}}
-                        {{--if(result.status_button==2){--}}
-                            {{--$('#tombol-jawab').prop('disabled', true);--}}
-                        {{--}--}}
-                        {{--Toast.fire({--}}
-                            {{--icon: result.status,--}}
-                            {{--title: result.message--}}
-                        {{--})--}}
+                $.ajax({
+                    url:'{{ url('update-status') }}',
+                    type:'post',
+                    data:{
+                        'id_siswa': '{{$id_siswa }}',
+                        'id_tema_soal': '{{ $id_tema_siswa }}',
+                        '_token':'{{ csrf_token() }}'
+                    },success:function (result) {
+                        if(result.status_button==2){
+                            $('#tombol-jawab').prop('disabled', true);
+                        }
+                        Toast.fire({
+                            icon: result.status,
+                            title: result.message
+                        })
 
-                    {{--}--}}
-                {{--})--}}
-            {{--}--}}
+                    }
+                })
+            }
 
-            {{--result = function () {--}}
-                {{--$.ajax({--}}
-                    {{--url:'{{ url('nilai-ujian') }}',--}}
-                    {{--type:'post',--}}
-                    {{--data:{--}}
-                        {{--'id_siswa': '{{$id_siswa }}',--}}
-                        {{--'id_tema_soal': '{{ $id_tema_siswa }}',--}}
-                        {{--'_token':'{{ csrf_token() }}'--}}
-                    {{--},success:function (result) {--}}
-                       {{--console.log(result);--}}
-                        {{--var frame = document.getElementById("frame");--}}
-                        {{--frame.parentNode.removeChild(frame);--}}
-                        {{--$('#modal-default').modal('show')--}}
-                       {{--$('#jawaban_benar').text('Benar :'+result.jawaban_benar);--}}
-                       {{--$('#jawaban_salah').text('Salah :'+result.jawaban_salah);--}}
-                       {{--$('#total_score').text('Jumlah Score :'+result.jawaban_score);--}}
+            result = function () {
+                $.ajax({
+                    url:'{{ url('nilai-ujian') }}',
+                    type:'post',
+                    data:{
+                        'id_siswa': '{{$id_siswa }}',
+                        'id_tema_soal': '{{ $id_tema_siswa }}',
+                        '_token':'{{ csrf_token() }}'
+                    },success:function (result) {
+                       console.log(result);
+                        var frame = document.getElementById("frame");
+                        frame.parentNode.removeChild(frame);
+                        $('#modal-default').modal('show')
+                       $('#jawaban_benar').text('Benar :'+result.jawaban_benar);
+                       $('#jawaban_salah').text('Salah :'+result.jawaban_salah);
+                       $('#total_score').text('Jumlah Score :'+result.jawaban_score);
 
-                    {{--}--}}
-                {{--})--}}
-            {{--}--}}
+                    }
+                })
+            }
 
-            {{--tutup_ujian = function () {--}}
-                {{--if(confirm('Apakah anda akan mengakhiri ujian ini ... ?')){--}}
-                    {{--update_status();--}}
-                    {{--result();--}}
-                {{--}else{--}}
-                    {{--alert('Ujian dilanjutkan');--}}
-                {{--}--}}
-            {{--}--}}
+            tutup_ujian = function () {
+                if(confirm('Apakah anda akan mengakhiri ujian ini ... ?')){
+                    update_status();
+                    result();
+                }else{
+                    alert('Ujian dilanjutkan');
+                }
+            }
         </script>
 @stop

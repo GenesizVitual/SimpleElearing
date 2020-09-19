@@ -35,6 +35,7 @@ class Ujian extends Controller
             return redirect()->back()->with('message_info','Token ujian yang anda masukan salah atau ujian yang anda ikuti belum dimulai');
         }
         $mdoel_tema_ujian = $data_tema_ujian->first();
+        #ambil waktu dari
         $waktu_kerja = date('H:i:s',strtotime($mdoel_tema_ujian->time));
         $get_hour = intval(date('H', strtotime($waktu_kerja)));
         $get_minute = intval(date('i', strtotime($waktu_kerja)));

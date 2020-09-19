@@ -26,4 +26,8 @@ class Soal extends Model
     public function listToKunciJawaban(){
         return $this->hasMany('App\Model\KunciJawaban','id_tema_soal', 'id');
     }
+
+    public function linkToDaftarSoal(){
+        return $this->hasMany('App\Model\DaftarSoal','id_tema_soal','id');
+    }
 }
