@@ -23,6 +23,58 @@ class Ujian extends Controller
         return view('Elearning.Ujian.content', $data);
     }
 
+//    public function ikut_ujian_lama(Request $req){
+//        $this->validate($req,[
+//            'id_siswa'=> 'required',
+//            'kode_siswa'=> 'required',
+//            'token'=> 'required',
+//        ]);
+//
+//        $data_tema_ujian = tbl_soal::where('status','1')->where('kelas', Session::get('kelas'))->where('jenis_kelas', Session::get('jenis_kelas'))->where('token',$req->token);
+//        if($data_tema_ujian->count() <= 0){
+//            return redirect()->back()->with('message_info','Token ujian yang anda masukan salah atau ujian yang anda ikuti belum dimulai');
+//        }
+//        $mdoel_tema_ujian = $data_tema_ujian->first();
+//        #ambil waktu total semua soal
+//
+//        $waktu_kerja = date('H:i:s',strtotime($mdoel_tema_ujian->time));
+//        $get_hour = intval(date('H', strtotime($waktu_kerja)));
+//        $get_minute = intval(date('i', strtotime($waktu_kerja)));
+//        $waktu_sekarang = date('Y-m-d H:i:s', strtotime('+'.$get_hour.' hours +'.$get_minute.' minute'));
+//
+//        $model = SiswaUjian::firstOrCreate(
+//            ['id_tema_soal'=> $mdoel_tema_ujian->id,'id_siswa'=>$req->id_siswa],
+//            ['status'=> '1', 'waktu_mulai'=>date('Y-m-d H:i:s', strtotime($waktu_sekarang))]
+//        );
+//
+//
+//        if($model->status==1){
+//            $date_format = date('Y/m/d H:i:s', strtotime($model->waktu_mulai));
+//        }else{
+//            $date_format = date('Y/m/d H:i:s');
+//        }
+//
+//        if($model->status ==2){
+//            $date_format = date('Y/m/d H:i:s');
+//        }
+//
+//        $data = [
+//            'data_ujian'=>$mdoel_tema_ujian,
+//            'id_siswa'=> $req->id_siswa,
+//            'id_tema_siswa'=> $mdoel_tema_ujian->id,
+//            'id_siswa_ujian'=> $model->id,
+//            'kode_siswa'=> $req->kode_siswa,
+//            'count_down_time'=>strtotime($date_format),
+//            'date'=> intval(date('d', strtotime($date_format))),
+//            'month'=> intval(date('m', strtotime($date_format))),
+//            'jam'=> intval(date('H', strtotime($date_format))),
+//            'minute'=> intval(date('i', strtotime($date_format))),
+//        ];
+//
+//
+//        return view('Elearning.Ujian.view_dokumen', $data)->with('message_info','Ujian Telah dimulai, silahkan jawab sampai waktu habis');
+//    }
+
     public function ikut_ujian(Request $req){
         $this->validate($req,[
             'id_siswa'=> 'required',
@@ -35,17 +87,14 @@ class Ujian extends Controller
             return redirect()->back()->with('message_info','Token ujian yang anda masukan salah atau ujian yang anda ikuti belum dimulai');
         }
         $mdoel_tema_ujian = $data_tema_ujian->first();
-        #ambil waktu dari
-        $waktu_kerja = date('H:i:s',strtotime($mdoel_tema_ujian->time));
-        $get_hour = intval(date('H', strtotime($waktu_kerja)));
-        $get_minute = intval(date('i', strtotime($waktu_kerja)));
-        $waktu_sekarang = date('Y-m-d H:i:s', strtotime('+'.$get_hour.' hours +'.$get_minute.' minute'));
+        #ambil waktu total semua soal
+
+        $waktu_sekarang = date('Y-m-d H:i:s');
 
         $model = SiswaUjian::firstOrCreate(
             ['id_tema_soal'=> $mdoel_tema_ujian->id,'id_siswa'=>$req->id_siswa],
             ['status'=> '1', 'waktu_mulai'=>date('Y-m-d H:i:s', strtotime($waktu_sekarang))]
         );
-
 
 
         if($model->status==1){
@@ -58,8 +107,9 @@ class Ujian extends Controller
             $date_format = date('Y/m/d H:i:s');
         }
 
+
         $data = [
-            'data_ujian'=>$mdoel_tema_ujian,
+            'data_ujian'=>$this->suffle_soal($mdoel_tema_ujian),
             'id_siswa'=> $req->id_siswa,
             'id_tema_siswa'=> $mdoel_tema_ujian->id,
             'id_siswa_ujian'=> $model->id,
@@ -71,9 +121,27 @@ class Ujian extends Controller
             'minute'=> intval(date('i', strtotime($date_format))),
         ];
 
-
         return view('Elearning.Ujian.view_dokumen', $data)->with('message_info','Ujian Telah dimulai, silahkan jawab sampai waktu habis');
     }
+
+    public function suffle_soal($model){
+        $data = $model->linkToDaftarSoal;
+        $array = [];
+        foreach ($data as $data_soal){
+            $row = [];
+            if(empty($data_soal->linkToJawaban->linkToKunciJabawan)){
+                $row[] = $data_soal->soal;
+                $row[] = $data_soal->waktu_kerja;
+                $row[] = $data_soal->no_urut;
+                $row[] = $data_soal->linkToPilihan;
+                $array[] = $row;
+            }
+        }
+        $suffle_array = shuffle($array);
+//        $new_array=array_rand($array, 2);
+        return $array;
+    }
+
 
     public function jawab_ujian(Request $req){
 

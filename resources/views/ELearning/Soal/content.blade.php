@@ -68,7 +68,8 @@
                                     <td>{{ $data_soal->kelas }}</td>
                                     <td>
                                         @if(!empty($data_soal->linkToDaftarSoal))
-
+                                            @php($time=DB::select('SELECT SEC_TO_TIME( SUM( TIME_TO_SEC( waktu_kerja ) ) ) AS timeSum   FROM `tbl_daftar_soal` where id_tema_soal='.$data_soal->id))
+                                            {{ $time[0]->timeSum }}
                                         @endif
                                     </td>
                                     <td>{{ $data_soal->token }}</td>

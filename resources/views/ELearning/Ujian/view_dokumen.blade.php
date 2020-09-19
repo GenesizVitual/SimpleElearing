@@ -10,7 +10,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-3">
-                <button type="button" class="btn btn-primary"  id="tombol-jawab" data-widget="control-sidebar" data-slide="true" href="#" role="button"><i class="fa fa-fire"></i> Jawab</button>
+                {{--<button type="button" class="btn btn-primary"  id="tombol-jawab" data-widget="control-sidebar" data-slide="true" href="#" role="button"><i class="fa fa-fire"></i> Jawab</button>--}}
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <h2 style="text-align: center" id="demo">Waktu Ujian Dimulai</h2>
@@ -29,12 +29,39 @@
 
     <div class="container-fluid">
         <div class="row">
+            {{--@foreach($data_ujian as $data)--}}
+                <div class="col-md-12" >
+                    <div class="card card-primary" style="height: 500px">
+                        {{--<div class="card-header">--}}
+                            {{--<h3 class="card-title">Primary Outline</h3>--}}
 
-            <div class="col-md-12" id="example1" style="width: 100%">
-                {{--{!! $data_ujian->linkToFileSoal->nama_file !!}--}}
-                <iframe id="frame" src="{{ $data_ujian->linkToFileSoal->nama_file }}" width="100%" height="500"></iframe>
-            </div>
-
+                            {{--<div class="card-tools">--}}
+                                {{--<button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>--}}
+                                {{--</button>--}}
+                            {{--</div>--}}
+                            {{--<!-- /.card-tools -->--}}
+                        {{--</div>--}}
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            @if(!empty($data_ujian[0][0]))
+                            {!! $data_ujian[0][0] !!}
+                            @endif
+                            <hr>
+                            @if(!empty($data_ujian[0][3]))
+                            <table>
+                                @foreach($data_ujian[0][3] as $pilihan)
+                                    <tr>
+                                        <td><input type="radio" name="jawaban">{{ $pilihan->label }})</td>
+                                        <td>{{ $pilihan->text }}</td>
+                                    </tr>
+                                @endforeach
+                            </table>
+                            @endif
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+            {{--@endforeach--}}
         </div>
     </div><!-- /.container-fluid -->
 </div>
@@ -88,7 +115,7 @@
             var time =  today.getHours()+ ":" + today.getMinutes() + ":" + today.getSeconds();
 
             var current_date = date+' '+time;
-            console.log(current_date);
+
             var countDownDate = new Date(current_date).getTime();
 
             // Update the count down every 1 second
@@ -114,70 +141,12 @@
                 if (distance < 0) {
                     clearInterval(x);
                     document.getElementById("demo").innerHTML = "Waktu Pengerjaan Telah Berakhir";
-//                    update_status();
-//                    result();
+
                 }
 
             }, 1000);
 
 
-            {{--update_status = function () {--}}
 
-                {{--const Toast = Swal.mixin({--}}
-                    {{--toast: true,--}}
-                    {{--position: 'top-end',--}}
-                    {{--showConfirmButton: false,--}}
-                    {{--timer: 3000--}}
-                {{--});--}}
-
-                {{--$.ajax({--}}
-                    {{--url:'{{ url('update-status') }}',--}}
-                    {{--type:'post',--}}
-                    {{--data:{--}}
-                        {{--'id_siswa': '{{$id_siswa }}',--}}
-                        {{--'id_tema_soal': '{{ $id_tema_siswa }}',--}}
-                        {{--'_token':'{{ csrf_token() }}'--}}
-                    {{--},success:function (result) {--}}
-                        {{--if(result.status_button==2){--}}
-                            {{--$('#tombol-jawab').prop('disabled', true);--}}
-                        {{--}--}}
-                        {{--Toast.fire({--}}
-                            {{--icon: result.status,--}}
-                            {{--title: result.message--}}
-                        {{--})--}}
-
-                    {{--}--}}
-                {{--})--}}
-            {{--}--}}
-
-            {{--result = function () {--}}
-                {{--$.ajax({--}}
-                    {{--url:'{{ url('nilai-ujian') }}',--}}
-                    {{--type:'post',--}}
-                    {{--data:{--}}
-                        {{--'id_siswa': '{{$id_siswa }}',--}}
-                        {{--'id_tema_soal': '{{ $id_tema_siswa }}',--}}
-                        {{--'_token':'{{ csrf_token() }}'--}}
-                    {{--},success:function (result) {--}}
-                       {{--console.log(result);--}}
-                        {{--var frame = document.getElementById("frame");--}}
-                        {{--frame.parentNode.removeChild(frame);--}}
-                        {{--$('#modal-default').modal('show')--}}
-                       {{--$('#jawaban_benar').text('Benar :'+result.jawaban_benar);--}}
-                       {{--$('#jawaban_salah').text('Salah :'+result.jawaban_salah);--}}
-                       {{--$('#total_score').text('Jumlah Score :'+result.jawaban_score);--}}
-
-                    {{--}--}}
-                {{--})--}}
-            {{--}--}}
-
-            {{--tutup_ujian = function () {--}}
-                {{--if(confirm('Apakah anda akan mengakhiri ujian ini ... ?')){--}}
-                    {{--update_status();--}}
-                    {{--result();--}}
-                {{--}else{--}}
-                    {{--alert('Ujian dilanjutkan');--}}
-                {{--}--}}
-            {{--}--}}
         </script>
 @stop
