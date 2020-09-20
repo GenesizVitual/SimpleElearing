@@ -91,6 +91,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 </body>
 @yield('jsContainer')
+@include('ELearning.component_admin.toast')
 
 
 </html>

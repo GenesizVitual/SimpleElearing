@@ -88,6 +88,7 @@ class Ujian extends Controller
         if($data_tema_ujian->count() <= 0){
             return redirect()->back()->with('message_info','Token ujian yang anda masukan salah atau ujian yang anda ikuti belum dimulai');
         }
+
         $mdoel_tema_ujian = $data_tema_ujian->first();
         #ambil waktu total semua soal
         $waktu_total_ujian = DB::select('SELECT  SEC_TO_TIME( SUM( TIME_TO_SEC( waktu_kerja ) ) ) AS timeSum, SEC_TO_TIME( SUM( TIME_TO_SEC( waktu_kerja ) )/count(id) ) as waktu_rata_rata 

@@ -59,7 +59,10 @@
                         <div class="card-footer">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label style="color: red">*Jawablah soal ini sebelum waktu pengerjaan soal selesai. jika waktu pengerjaan soal habis, maka sistem akan melewati soal ini tampa ada jawaban</label>
+                                    <small style="color: red">
+                                        * Selesaikan ujian ini sebelum waktu ujian berakhir.<br>
+                                        * Selesaikan Soal ujian sebelum waktu pengerjaan soal habis. jika waktu pengerjaan soal habis maka sistem akan melewati soal ini tampa ada jawaban
+                                    </small>
                                 </div>
                                 <div class="col-md-6">
                                     <button class="btn btn-success float-right" onclick="window.location.reload()">Lanjut Ke Soal Berikutnya</button>
@@ -207,8 +210,9 @@
                 if (distance < 0) {
                     clearInterval(x);
                     document.getElementById("demo2").innerHTML = "Waktu Pengerjaan Telah Berakhir";
-                    alert('Waktu Pengerjaan Soal telah selesai');
                     window.location.href="{{ url('ujian') }}";
+                    alert('Waktu Pengerjaan Soal telah selesai');
+
                 }
 
             }, 1000);
@@ -216,7 +220,6 @@
         </script>
 
 
-        @include('ELearning.component_admin.toast')
         <script>
             onSelected= function (id,id_siswa,id_ujian,jawaban,no_urut) {
                 alert(id+'===='+id_siswa+'===='+id_ujian+'===='+jawaban+'===='+no_urut);
