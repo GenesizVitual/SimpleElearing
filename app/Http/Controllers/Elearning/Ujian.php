@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Elearning;
 
 use App\Http\Controllers\Controller;
+
 use Illuminate\Http\Request;
 use App\Model\Soal as tbl_soal;
 use App\Model\SiswaUjian;
 use App\Model\JawabanSiswa;
 use App\Model\KunciJawaban;
+use Illuminate\Support\Facades\DB;
 use Session;
 
 class Ujian extends Controller
@@ -88,8 +90,12 @@ class Ujian extends Controller
         }
         $mdoel_tema_ujian = $data_tema_ujian->first();
         #ambil waktu total semua soal
-
-        $waktu_sekarang = date('Y-m-d H:i:s');
+        $waktu_total_ujian = DB::select('SELECT  SEC_TO_TIME( SUM( TIME_TO_SEC( waktu_kerja ) ) ) AS timeSum, SEC_TO_TIME( SUM( TIME_TO_SEC( waktu_kerja ) )/count(id) ) as waktu_rata_rata 
+FROM tbl_daftar_soal WHERE id_tema_soal='.$mdoel_tema_ujian->id);
+        $waktu_kerja = date('H:i:s',strtotime($waktu_total_ujian[0]->waktu_rata_rata));
+        $get_hour = intval(date('H', strtotime($waktu_kerja)));
+        $get_minute = intval(date('i', strtotime($waktu_kerja)));
+        $waktu_sekarang = date('Y-m-d H:i:s', strtotime('+'.$get_hour.' hours +'.$get_minute.' minute'));
 
         $model = SiswaUjian::firstOrCreate(
             ['id_tema_soal'=> $mdoel_tema_ujian->id,'id_siswa'=>$req->id_siswa],
@@ -109,7 +115,7 @@ class Ujian extends Controller
 
 
         $data = [
-            'data_ujian'=>$this->suffle_soal($mdoel_tema_ujian),
+            'data_ujian'=>$this->suffle_soal($mdoel_tema_ujian,$model),
             'id_siswa'=> $req->id_siswa,
             'id_tema_siswa'=> $mdoel_tema_ujian->id,
             'id_siswa_ujian'=> $model->id,
@@ -121,19 +127,36 @@ class Ujian extends Controller
             'minute'=> intval(date('i', strtotime($date_format))),
         ];
 
+
         return view('Elearning.Ujian.view_dokumen', $data)->with('message_info','Ujian Telah dimulai, silahkan jawab sampai waktu habis');
     }
 
-    public function suffle_soal($model){
+    public function suffle_soal($model,$model_siswa_ujian){
         $data = $model->linkToDaftarSoal;
+
         $array = [];
         foreach ($data as $data_soal){
             $row = [];
             if(empty($data_soal->linkToJawaban->linkToKunciJabawan)){
+
+                $waktu_kerja = date('H:i:s',strtotime($data_soal->waktu_kerja));
+                $get_hour = intval(date('H', strtotime($waktu_kerja)));
+                $get_minute = intval(date('i', strtotime($waktu_kerja)));
+                $waktu_sekarang = date('Y-m-d H:i:s', strtotime('+'.$get_hour.' hours +'.$get_minute.' minute'));
+
                 $row[] = $data_soal->soal;
                 $row[] = $data_soal->waktu_kerja;
-                $row[] = $data_soal->no_urut;
+                $row[] = $data_soal->no_urut; //no_urut
                 $row[] = $data_soal->linkToPilihan;
+                $row[] = $data_soal->linkToJawaban->id; //id_kunci_jawaban
+                $row[] = Session::get('id_siswa'); //id_siswa
+                $row[] = $model_siswa_ujian->id; //id_ujian_siswa
+                $row[] = $data_soal->id_tema_soal;
+                $row['date']= intval(date('d', strtotime($waktu_sekarang )));
+                $row['month']= intval(date('m', strtotime($waktu_sekarang )));
+                $row['jam']= intval(date('H', strtotime($waktu_sekarang )));
+                $row['minute']= intval(date('i', strtotime($waktu_sekarang )));
+
                 $array[] = $row;
             }
         }
@@ -161,7 +184,7 @@ class Ujian extends Controller
         );
 
         if($model){
-            return response()->json(['status'=>'success','message'=>'Anda telah memilih jawaban:'.$req->jawaban.' di soal no:'.$req->no_urut]);
+            return response()->json(['status'=>'success','message'=>'Anda telah memilih jawaban:'.$req->jawaban.' untuk soal ini']);
         }else{
             return response()->json(['status'=>'error','message'=>'Gagal, mengisi jawaban pastikan jaringan anda lancar']);
         }

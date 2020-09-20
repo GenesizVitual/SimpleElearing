@@ -13,10 +13,10 @@
                 {{--<button type="button" class="btn btn-primary"  id="tombol-jawab" data-widget="control-sidebar" data-slide="true" href="#" role="button"><i class="fa fa-fire"></i> Jawab</button>--}}
             </div><!-- /.col -->
             <div class="col-sm-6">
-                <h2 style="text-align: center" id="demo">Waktu Ujian Dimulai</h2>
+
             </div><!-- /.col -->
             <div class="col-sm-3">
-              <button type="button" class="btn btn-danger float-right" onclick="tutup_ujian()">Akhiri Ujian</button>
+              {{--<button type="button" class="btn btn-danger float-right" onclick="tutup_ujian()">Akhiri Ujian</button>--}}
             </div><!-- /.col -->
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -30,17 +30,15 @@
     <div class="container-fluid">
         <div class="row">
             {{--@foreach($data_ujian as $data)--}}
+            @if(!empty($data_ujian[0][0]))
                 <div class="col-md-12" >
-                    <div class="card card-primary" style="height: 500px">
-                        {{--<div class="card-header">--}}
-                            {{--<h3 class="card-title">Primary Outline</h3>--}}
+                    <div class="card card-primary" >
+                        <div class="card-header">
 
-                            {{--<div class="card-tools">--}}
-                                {{--<button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>--}}
-                                {{--</button>--}}
-                            {{--</div>--}}
-                            {{--<!-- /.card-tools -->--}}
-                        {{--</div>--}}
+                                <label class="float-right" id="demo">Waktu Ujian Dimulai</label>
+                                <label class="float-left" id="demo2"></label>
+                            <!-- /.card-tools -->
+                        </div>
                         <!-- /.card-header -->
                         <div class="card-body">
                             @if(!empty($data_ujian[0][0]))
@@ -51,16 +49,27 @@
                             <table>
                                 @foreach($data_ujian[0][3] as $pilihan)
                                     <tr>
-                                        <td><input type="radio" name="jawaban">{{ $pilihan->label }})</td>
+                                        <td><input type="radio" name="jawaban" onclick="onSelected('{{ $data_ujian[0][4] }}' ,'{{ $data_ujian[0][5] }}','{{ $data_ujian[0][6] }}','{{ $pilihan->label }}','{{ $data_ujian[0][2] }}')">{{ $pilihan->label }}). </td>
                                         <td>{{ $pilihan->text }}</td>
                                     </tr>
                                 @endforeach
                             </table>
                             @endif
                         </div>
+                        <div class="card-footer">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label style="color: red">*Jawablah soal ini sebelum waktu pengerjaan soal selesai. jika waktu pengerjaan soal habis, maka sistem akan melewati soal ini tampa ada jawaban</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <button class="btn btn-success float-right" onclick="window.location.reload()">Lanjut Ke Soal Berikutnya</button>
+                                </div>
+                            </div>
+                        </div>
                         <!-- /.card-body -->
                     </div>
                 </div>
+            @endif
             {{--@endforeach--}}
         </div>
     </div><!-- /.container-fluid -->
@@ -100,18 +109,34 @@
 @section('jsContainer')
         {{--<script src="{{ asset('PDFObject/pdfobject.js') }}"></script>--}}
         {{--<script>PDFObject.embed("https://drive.google.com/file/d/1YlISufiCbleEF3gsluP7tjM5f58L2D3a/view?usp=sharing", "#example1");</script>--}}
+<script>
+    $(function () {
+        $(document).keydown(function (e) {
+            return (e.which || e.keyCode) != 116;
+        });
+
+        $(document).ready(function() {
+            function disableBack() { window.history.forward() }
+
+            window.onload = disableBack();
+            window.onpageshow = function(evt) { if (evt.persisted) disableBack() }
+
+        });
+    });
+</script>
+
         <script>
 
             $("iframe").tooltip('hide');
 
             // Set the date we're counting down to
             var today = new Date();
-            today.setDate(parseInt('{{ $date }}'));
-            today.setMonth(parseInt('{{ $month }}'));
+            today.setDate(parseInt('{{ $data_ujian[0]['date'] }}'));
+            today.setMonth(parseInt('{{ $data_ujian[0]['month'] }}'));
 
             var date = today.getFullYear()+'-'+(today.getMonth() )+'-'+today.getDate();
-            today.setHours(parseInt('{{ $jam }}'));
-            today.setMinutes(parseInt('{{ $minute }}'));
+            today.setHours(parseInt('{{ $data_ujian[0]['jam'] }}'));
+            today.setMinutes(parseInt('{{ $data_ujian[0]['minute'] }}'));
             var time =  today.getHours()+ ":" + today.getMinutes() + ":" + today.getSeconds();
 
             var current_date = date+' '+time;
@@ -134,19 +159,121 @@
                 var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
                 // Display the result in the element with id="demo"
-                document.getElementById("demo").innerHTML =  hours + " Jam "
+                document.getElementById("demo").innerHTML =  "Waktu Pengerjaan Soal: "+hours + " Jam "
                     + minutes + " Menit " + seconds + " detik ";
-//                update_time(hours+':'+minutes+':'+seconds);
+
                 // If the count down is finished, write some text
                 if (distance < 0) {
                     clearInterval(x);
-                    document.getElementById("demo").innerHTML = "Waktu Pengerjaan Telah Berakhir";
-
+                    times_up('{{ $data_ujian[0][4] }}' ,'{{ $data_ujian[0][5] }}','{{ $data_ujian[0][6] }}','-','{{ $data_ujian[0][2] }}');
+                    window.location.reload();
                 }
 
             }, 1000);
 
+            var todays = new Date();
+            todays.setDate(parseInt('{{ $date }}'));
+            todays.setMonth(parseInt('{{ $month }}'));
+
+            var date2 = todays.getFullYear()+'-'+(todays.getMonth() )+'-'+todays.getDate();
+            todays.setHours(parseInt('{{ $jam }}'));
+            todays.setMinutes(parseInt('{{ $minute }}'));
+            var time2 =  todays.getHours()+ ":" + todays.getMinutes() + ":" + todays.getSeconds();
+
+            var current_date2 = date2+' '+time2;
+
+            var countDownDate2 = new Date(current_date2).getTime();
+
+            // Update the count down every 1 second
+            var y = setInterval(function() {
+
+                // Get today's date and time
+                var now = new Date().getTime();
+
+                // Find the distance between now and the count down date
+                var distance = countDownDate2 - now;
+
+                // Time calculations for days, hours, minutes and seconds
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // Display the result in the element with id="demo"
+                document.getElementById("demo2").innerHTML =  " Waktu ujian :"+hours + " Jam "
+                    + minutes + " Menit " + seconds + " detik ";
+
+                // If the count down is finished, write some text
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById("demo2").innerHTML = "Waktu Pengerjaan Telah Berakhir";
+                    alert('Waktu Pengerjaan Soal telah selesai');
+                    window.location.href="{{ url('ujian') }}";
+                }
+
+            }, 1000);
+
+        </script>
 
 
+        @include('ELearning.component_admin.toast')
+        <script>
+            onSelected= function (id,id_siswa,id_ujian,jawaban,no_urut) {
+                alert(id+'===='+id_siswa+'===='+id_ujian+'===='+jawaban+'===='+no_urut);
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+
+                $.ajax({
+                    url :'{{ url('jawab-ujian') }}',
+                    type:'post',
+                    data : {
+                        'id_siswa':id_siswa,
+                        'no_urut':no_urut,
+                        'id_kunci_jabawan':id,
+                        'id_ujian':id_ujian,
+                        'jawaban':jawaban,
+                        '_token':'{{ csrf_token() }}',
+                        '_method':'put',
+                    }, success:function (result) {
+                        Toast.fire({
+                            icon: result.status,
+                            title: result.message
+                        })
+                    }
+                })
+            }
+
+            times_up= function (id,id_siswa,id_ujian,jawaban,no_urut) {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+
+                $.ajax({
+                    url :'{{ url('jawab-ujian') }}',
+                    type:'post',
+                    data : {
+                        'id_siswa':id_siswa,
+                        'no_urut':no_urut,
+                        'id_kunci_jabawan':id,
+                        'id_ujian':id_ujian,
+                        'jawaban':jawaban,
+                        '_token':'{{ csrf_token() }}',
+                        '_method':'put',
+                    }, success:function (result) {
+                        Toast.fire({
+                            icon: result.status,
+                            title: 'Waktu pengerjaan persoal selesai, sistem akan anda tidak menjawab pertanyaan ini'
+                        })
+
+                    }
+                })
+            }
         </script>
 @stop

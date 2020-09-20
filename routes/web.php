@@ -86,6 +86,7 @@ Route::middleware([SiswaCheck::class])->group(function(){
 
     Route::get('ujian','Elearning\Ujian@index');
     Route::post('ikut-ujian','Elearning\Ujian@ikut_ujian');
+    Route::get('ujian-dimulai','Elearning\Ujian@ikut_ujian');
     Route::put('jawab-ujian','Elearning\Ujian@jawab_ujian');
     Route::post('update-status','Elearning\Ujian@updateStatusUjian');
     Route::post('nilai-ujian','Elearning\Ujian@nilai_ujian');
