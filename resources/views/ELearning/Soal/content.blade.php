@@ -203,10 +203,12 @@
                                 @endforeach
                             </select>
                         </div>
-                        {{--<div class="form-group">--}}
-                            {{--<label>Waktu Ujian</label>--}}
-                            {{--<input type="time" class="form-control" name="time" required>--}}
-                        {{--</div>--}}
+                        <div class="form-group">
+                            <label>Jenis Huruf</label><br>
+                            <input type="radio" name="status_lagunge" value="0" checked required> Alfabet <br>
+                            <input type="radio" name="status_lagunge" value="1" required> Unik<br>
+                            <small style="color: orange;">*pilih jenis huruf selain menggunakan huruf alfabet</small>
+                        </div>
                     </div>
                     <div class="modal-footer justify-content-between">
                         <small>Isilah data tema soal dengan sebenar-benarnya</small>

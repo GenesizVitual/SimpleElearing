@@ -43,6 +43,7 @@ class Soal extends Controller
             'judul_soal'=>'required',
             'jenis_kelas'=>'required',
             'kelas'=>'required',
+            'status_lagunge'=>'required',
         ]);
 
 
@@ -71,7 +72,7 @@ class Soal extends Controller
             'judul_soal'=>'required',
             'jenis_kelas'=>'required',
             'kelas'=>'required',
-//            'time'=>'required',
+            'status_lagunge'=>'required',
         ]);
 
 
@@ -80,7 +81,7 @@ class Soal extends Controller
         $model->judul_soal = $req->judul_soal;
         $model->jenis_kelas = $req->jenis_kelas;
         $model->kelas = $req->kelas;
-//        $model->time = $req->time;
+        $model->status_lagunge = $req->status_lagunge;
         if($model->save()){
             return redirect()->back()->with('message_success','Anda telah mengubah item tema soal dengan nama :'.$model->judul_soal);
         }else{

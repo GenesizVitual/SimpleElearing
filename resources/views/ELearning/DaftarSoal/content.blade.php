@@ -3,6 +3,8 @@
 @section('css')
     <!-- summernote -->
     <link rel="stylesheet" href="{{ asset('admin_asset/plugins/summernote/summernote-bs4.css') }}">
+
+
  @stop
 
 @section('content')
@@ -39,11 +41,10 @@
                             {{ csrf_field() }}
                             <input type="hidden" name="no_urut" value="{{ $no_urut }}">
                             <input type="hidden" name="id_tema_soal" value="{{ $id_tema_soal }}">
+                            <input type="hidden" name="status_lagunge" value="{{ $data_tema_soal->status_lagunge }}">
                             <div class="row">
                                 <div class="col-md-12">
-                                <textarea class="textarea" placeholder="Masukan Soalnya disini" name="soal"
-                                style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">
-                                </textarea>
+                                <textarea  @if($data_tema_soal->status_lagunge !=1) class="textarea" @else class="form-control" @endif placeholder="Masukan Soalnya disini" name="soal" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
                                 </div>
                                 <div class="col-md-6">
                                     <p>Pengaturan pilihan ganda</p>
@@ -90,10 +91,17 @@
                                                     <input type="time" class="form-control" value="00:05" name="waktu_kerja" placeholder="Waktu Pengerjaan setiap soal" required>
                                                 </td>
                                             </tr>
+                                            @if($data_tema_soal->status_lagunge ==1)
+                                                <tr>
+                                                    <td><h4>Gambar</h4></td>
+                                                    <td>:</td>
+                                                    <td>
+                                                        <input type="file" class="form-control"  name="gambar" placeholder="masukan gambar">
+                                                    </td>
+                                                </tr>
+                                            @endif
                                         <tr>
                                             <td colspan="3">
-                                             <br>
-                                             <br>
                                              <br>
                                              <br>
                                                 <button type="submit" class="btn btn-primary" style="width: 100%" onclick="return confirm('Pastikan soal yang anda masukan sudah benar ... ?')">Simpan</button>
@@ -127,14 +135,14 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <form action="{{ url('daftar-soal') }}" method="post">
+                        <form action="{{ url('daftar-soal') }}" method="post" enctype="multipart/form-data">
                             {{ csrf_field() }}
                             <input type="hidden" name="no_urut" value="{{ $soal->no_urut }}">
                             <input type="hidden" name="id_tema_soal" value="{{ $soal->id_tema_soal }}">
+                            <input type="hidden" name="status_lagunge" value="{{ $data_tema_soal->status_lagunge }}">
                             <div class="row">
                                 <div class="col-md-12">
-                                <textarea class="textarea" placeholder="Masukan Soalnya disini" name="soal" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">
-                                    {{ $soal->soal }}
+                                <textarea @if($data_tema_soal->status_lagunge !=1) class="textarea" @else class="form-control" @endif placeholder="Masukan Soalnya disini" name="soal" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">@if($data_tema_soal->status_lagunge ==1) {{ $soal->soal }}@else {{ $soal->soal  }} @endif
                                 </textarea>
                                 </div>
                                 <div class="col-md-6">
@@ -190,13 +198,26 @@
                                                 <input type="time" class="form-control" value="{{ $soal->waktu_kerja }}" name="waktu_kerja" placeholder="Waktu Pengerjaan setiap soal" required>
                                             </td>
                                         </tr>
+                                        @if($data_tema_soal->status_lagunge ==1)
+                                        <tr>
+                                            <td><h4>Gambar</h4></td>
+                                            <td>:</td>
+                                            <td>
+                                                <input type="file" class="form-control"  name="gambar" placeholder="masukan gambar">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" align="center">
+                                                @if(!empty($soal->gambar))
+                                                    <img src="{{ asset('gambar_bhs_arab/'.$soal->gambar) }}" style="width: 25%">
+                                                @endif
+                                            </td>
+                                        </tr>
+
+                                        @endif
                                         <tr>
                                             <td colspan="3">
-                                                <br>
-                                                <br>
-                                                <br>
-                                                <br>
-                                                <button type="submit" class="btn btn-primary" style="width: 100%">Simpan</button>
+                                                 <button type="submit" class="btn btn-primary" style="width: 100%">Simpan</button>
                                             </td>
                                         </tr>
                                     </table>
@@ -223,10 +244,13 @@
     <script>
         $(function () {
             // Summernote
+            @if($data_tema_soal->status_lagunge !=1)
             $('.textarea').summernote({
-                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana', 'Amiri'],
-                fontNamesIgnoreCheck: ['Amiri']
+                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana', 'Amiri','me_quran'],
+                fontNamesIgnoreCheck: ['me_quran'],
             });
+            @endif
+
         })
     </script>
 @stop

@@ -2,7 +2,37 @@
 
 @section('css')
     <style>
-        .pdfobject-container { height: 30rem; border: 1rem solid rgba(0,0,0,.1); }
+        @font-face {
+
+            font-family: 'me_quran';
+
+            src: url('https://cdn.rawgit.com/KompiAjaib/font/master/me_quran.eot');
+
+            src: url('https://cdn.rawgit.com/KompiAjaib/font/master/me_quran.eot?#iefix') format('embedded-opentype'), url('https://cdn.rawgit.com/KompiAjaib/font/master/me_quran.woff') format('woff'), url('https://cdn.rawgit.com/KompiAjaib/font/master/me_quran.ttf') format('truetype'), url('https://cdn.rawgit.com/KompiAjaib/font/master/me_quran.svg#me_quran') format('svg');
+
+            font-weight: normal;
+
+            font-weight: 400;
+
+            font-style: normal;
+
+            }
+
+        .text-arab {
+
+            font-size: 22px;
+
+            line-height: 2.2;
+
+            font-family: me_quran, sans-serif;
+
+            font-weight: normal;
+
+            text-align: right;
+
+            direction: rtl;
+
+        }
     </style>
 @stop
 
@@ -43,7 +73,22 @@
                             <div class="card-body">
                                 <table style="width: 100%">
                                     <tr>
-                                        <td colspan="2">{!! $soal->soal !!}</td>
+                                        <td colspan="2">
+                                            @if($data->soal ==0)
+                                                {!! $soal->soal !!}
+                                            @else
+                                            <div class="text-arab">
+                                                {{$soal->soal}}
+                                            </div>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                           @if(!empty($soal->gambar))
+                                            <img src="{{ asset('gambar_bhs_arab/'.$soal->gambar) }}" style="width: 50%">
+                                           @endif
+                                        </td>
                                     </tr>
                                     @if(!empty($soal->linkToPilihan))
                                         @foreach($soal->linkToPilihan->sortBy('label') as $data)

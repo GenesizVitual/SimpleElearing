@@ -9,7 +9,7 @@ class Soal extends Model
     //
     protected $table="tbl_tema_soal";
 
-    protected $fillable = ['id_guru','judul_soal','jenis_kelas','kelas','token','time','status'];
+    protected $fillable = ['id_guru','judul_soal','jenis_kelas','kelas','token','time','status','status_lagunge'];
 
     public function linkToGuru(){
         return $this->belongsTo('App\Model\Guru', 'id_guru');
