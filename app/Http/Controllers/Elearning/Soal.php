@@ -9,6 +9,7 @@ use App\Model\Siswa;
 use App\Model\Soal as tbl_soal;
 use App\Model\FileSoal;
 use App\Model\KunciJawaban;
+use App\Model\SiswaUjian;
 use Session;
 
 class Soal extends Controller
@@ -59,7 +60,7 @@ class Soal extends Controller
     }
 
     public function edit($id){
-        $model = tbl_soal::findOrFail($id);
+        $model = tbl_soal::where('id_guru', Session::get('id_guru'))->findOrFail($id);
         return response()->json($model);
     }
 
@@ -76,7 +77,7 @@ class Soal extends Controller
         ]);
 
 
-        $model =tbl_soal::findOrFail($id);
+        $model =tbl_soal::where('id_guru', Session::get('id_guru'))->findOrFail($id);
         $model->id_guru = $req->id_guru;
         $model->judul_soal = $req->judul_soal;
         $model->jenis_kelas = $req->jenis_kelas;
@@ -96,7 +97,7 @@ class Soal extends Controller
             '_method'=>'required',
             'id'=>'required',
         ]);
-        $model =tbl_soal::findOrFail($req->id);
+        $model =tbl_soal::where('id_guru', Session::get('id_guru'))->findOrFail($req->id);
 
         if($model->status == 1){
             $model->status = '0';
@@ -118,7 +119,7 @@ class Soal extends Controller
             'id'=>'required',
         ]);
 
-        $model =tbl_soal::findOrFail($req->id);
+        $model =tbl_soal::where('id_guru', Session::get('id_guru'))->findOrFail($req->id);
         if($model->delete()){
             return response()->json(array('status'=>'success','message'=>'Anda telah menghapus soal dengan nama :'.$model->judul_soal));
         }else{
@@ -177,7 +178,7 @@ class Soal extends Controller
     }
 
     public function data_hasil_ujian($id){
-        $model =tbl_soal::findOrFail($id);
+        $model =tbl_soal::where('id_guru', Session::get('id_guru'))->findOrFail($id);
         $row = array();
         $no =1;
 
@@ -194,6 +195,7 @@ class Soal extends Controller
                 $colum['jawaban_benar'] = $hasil['jawaban_benar'];
                 $colum['jawaban_salah'] = $hasil['jawaban_salah'];
                 $colum['jawaban_score'] = $hasil['jawaban_score'];
+                $colum['id_ujian_siswa'] = $data_siswa->id;
                 $row[] = $colum;
             }
         }
@@ -209,7 +211,7 @@ class Soal extends Controller
 
     public function cetak_hasil_ujian($id)
     {
-        $model =tbl_soal::findOrFail($id);
+        $model =tbl_soal::where('id_guru', Session::get('id_guru'))->findOrFail($id);
         $row = array();
         $no =1;
 
@@ -235,6 +237,48 @@ class Soal extends Controller
 
         return view('Elearning.report.cetak_hasil_ujian', $data);
     }
+
+    public function halaman_detail_ujian($id_siswa_ujian){
+        $model = $this->data_detail_ujian($id_siswa_ujian);
+        return view('Elearning.report.detail_hasil_ujian', $model);
+    }
+    public function cetak_detail_ujian($id_siswa_ujian){
+        $model = $this->data_detail_ujian($id_siswa_ujian);
+        return view('Elearning.report.cetak_detail_hasil_ujian', $model);
+    }
+
+    public function data_detail_ujian($id_siswa_ujian)
+    {
+        $model = SiswaUjian::findOrFail($id_siswa_ujian);
+        $cek_tema_soal = $model->linkToTemaSoal;
+        $data_siswa = $model->linkToSiswa;
+        $row=[];
+        if($cek_tema_soal->id_guru == Session::get('id_guru')){
+            #cek jawaban siswa
+            $model_ujian_siswa = $model->linkToJawabanSiswa->sortBy('no_urut');
+            $no_urut = 1;
+            $total_skor = 0;
+            foreach ($model_ujian_siswa as $data_jabawan){
+                $column = [];
+                $column['no'] = $no_urut++;
+                $column['kode_soal'] = $data_jabawan->no_urut;
+                $column['kunci_jawaban'] = $data_jabawan->linkToKunciJawaban->jawaban;
+                $column['skor'] = $data_jabawan->linkToKunciJawaban->score;
+                $skor = 0;
+                if($data_jabawan->linkToKunciJawaban->jawaban == $data_jabawan->jawaban){
+                    $skor = $data_jabawan->linkToKunciJawaban->skore;
+                }
+                $column['jawaban_siswa'] = $data_jabawan->jawaban;
+                $column['sub_skor'] = $skor;
+                $total_skor += $skor;
+                $row[] = $column;
+            }
+            return ['siswa'=>$data_siswa,'tema_soal'=>$cek_tema_soal,'data_jawaban'=>$row,'total_skor'=>$total_skor, 'id_soal_ujian'=>$id_siswa_ujian];
+        }else{
+            return "you don't have authorized in this pages";
+        }
+    }
+
 
     public function upload(Request $req){
         $this->validate($req,[

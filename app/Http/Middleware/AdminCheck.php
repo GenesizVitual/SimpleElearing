@@ -16,7 +16,7 @@ class AdminCheck
     public function handle($request, Closure $next)
     {
 
-        if(empty(Session::get('id'))){
+        if(empty(Session::get('id')) && empty(Session::get('id_guru')) ){
             return redirect('/');
         }
 

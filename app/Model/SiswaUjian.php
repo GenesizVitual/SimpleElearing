@@ -11,7 +11,15 @@ class SiswaUjian extends Model
 
     protected $fillable = ['id_tema_soal','id_siswa','status','waktu_mulai'];
 
+    public function linkToTemaSoal(){
+        return $this->hasOne('App\Model\Soal','id','id_tema_soal');
+    }
+
     public function linkToSiswa(){
         return $this->hasOne('App\Model\Siswa', 'id','id_siswa');
+    }
+
+    public function linkToJawabanSiswa(){
+        return $this->hasMany('App\Model\JawabanSiswa','id_siswa_ujian','id');
     }
 }

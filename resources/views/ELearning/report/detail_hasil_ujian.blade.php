@@ -11,12 +11,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Hasil Ujian</h1>
+                    <h1 class="m-0 text-dark">Detail Hasil Ujian </h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Hasil Ujian</li>
+                        <li class="breadcrumb-item active">Detail Hasil Ujian</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -32,47 +32,65 @@
                 <div class="col-md-12">
                     <div class="card card-success">
                         <div class="card-header">
-                            <h3 class="card-title">Tabel Hasil Ujian</h3>
+                            <h3 class="card-title">Tabel Hasil Jawaban Siswa</h3>
 
                             <div class="card-tools">
-                                <a href="{{ url('cetak-hasil-ujian/'.$id_soal) }}" class="btn btn-primary"><i class="fa fa-print"></i> Print </a>
+                                <a href="{{ url('cetak-detail-hasil-ujian/'.$id_soal_ujian) }}" class="btn btn-primary"><i class="fa fa-print"></i> Print </a>
                             </div>
                             <!-- /.card-tools -->
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-
+                            <table style="width: 100%">
+                                <tr>
+                                    <th style="width: 50px">Nama</th>
+                                    <th style="width: 10px">:</th>
+                                    <th>{{ $siswa->nama }}</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 100px">Jenis Kelas</th>
+                                    <th style="width: 10px">:</th>
+                                    <th>{{ $siswa->jenis_kelas }}</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 50px">Kelas</th>
+                                    <th style="width: 10px">:</th>
+                                    <th>{{ $siswa->kelas }}</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 50px">Tema Soal</th>
+                                    <th style="width: 10px">:</th>
+                                    <th>{{ $tema_soal->judul_soal }}</th>
+                                </tr>
+                            </table>
                             <table id="table-data" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
                                     <th rowspan="2">#</th>
-                                    <th rowspan="2">Nama</th>
-                                    <th rowspan="2">Kode</th>
-                                    <th rowspan="2">Kelas</th>
-                                    <th rowspan="2">Jenis kelas</th>
-                                    <th colspan="3">Hasil</th>
-                                </tr>
-                                <tr>
-                                    <th>Benar</th>
-                                    <th>Salah</th>
-                                    <th>Score</th>
+                                    <th rowspan="2">Kode Soal</th>
+                                    <th rowspan="2">Kunci Jawaban</th>
+                                    <th rowspan="2">Skor</th>
+                                    <th rowspan="2">Jawaban Siswa</th>
+                                    <th colspan="3">Sub Skor</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @php($no=1)
-                                @if(!empty($data_ujian))
-                                    @foreach($data_ujian as $data)
+                                @if(!empty($data_jawaban))
+                                    @foreach($data_jawaban as $data)
                                         <tr>
                                             <th >{{ $data['no'] }}</th>
-                                            <th><a href="{{ url('detail-jawaban/'.$data['id_ujian_siswa'] ) }}">{{ $data['nama'] }}</a></th>
-                                            <th>{{ $data['kode'] }}</th>
-                                            <th>{{ $data['kelas'] }}</th>
-                                            <th>{{ $data['jenis_kelas'] }}</th>
-                                            <td>{{ $data['jawaban_benar'] }}</td>
-                                            <td>{{ $data['jawaban_salah'] }}</td>
-                                            <td>{{ $data['jawaban_score'] }}</td>
+                                            <th>{{ $data['kode_soal'] }}</th>
+                                            <th>{{ $data['kunci_jawaban'] }}</th>
+                                            <th>{{ $data['skor'] }}</th>
+                                            <th>{{ $data['jawaban_siswa'] }}</th>
+                                            <th>{{ $data['sub_skor'] }}</th>
                                         </tr>
                                     @endforeach
+                                        <tr>
+                                            <th colspan="5">Total Skor</th>
+                                            <th>{{ $total_skor }}</th>
+                                        </tr>
                                 @endif
                                 </tbody>
                             </table>
@@ -101,9 +119,9 @@
     <script>
         $(function () {
             $('#table-data').DataTable({
-                "paging": true,
+                "paging": false,
                 "lengthChange": false,
-                "searching": true,
+                "searching": false,
                 "ordering": true,
                 "info": true,
                 "autoWidth": false,
