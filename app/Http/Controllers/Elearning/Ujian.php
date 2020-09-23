@@ -93,7 +93,7 @@ class Ujian extends Controller
         #ambil waktu total semua soal
         $waktu_total_ujian = DB::select('SELECT  SEC_TO_TIME( SUM( TIME_TO_SEC( waktu_kerja ) ) ) AS timeSum, SEC_TO_TIME( SUM( TIME_TO_SEC( waktu_kerja ) )/count(id) ) as waktu_rata_rata 
 FROM tbl_daftar_soal WHERE id_tema_soal='.$mdoel_tema_ujian->id);
-        $waktu_kerja = date('H:i:s',strtotime($waktu_total_ujian[0]->waktu_rata_rata));
+        $waktu_kerja = date('H:i:s',strtotime($waktu_total_ujian[0]->timeSum));
         $get_hour = intval(date('H', strtotime($waktu_kerja)));
         $get_minute = intval(date('i', strtotime($waktu_kerja)));
         $waktu_sekarang = date('Y-m-d H:i:s', strtotime('+'.$get_hour.' hours +'.$get_minute.' minute'));

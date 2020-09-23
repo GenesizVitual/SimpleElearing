@@ -35,40 +35,59 @@
                     <div class="card card-primary" >
                         <div class="card-header">
 
-                                <label class="float-right" id="demo">Waktu Ujian Dimulai</label>
+                                <label class="float-right" id="demo"></label>
                                 <label class="float-left" id="demo2"></label>
                             <!-- /.card-tools -->
                         </div>
                         <!-- /.card-header -->
-                        <div class="card-body">
-                            @if(!empty($data_ujian[0][0]))
-                            {!! $data_ujian[0][0] !!}
-                            @endif
-                            <hr>
-                            @if(!empty($data_ujian[0][3]))
-                            <table>
-                                @foreach($data_ujian[0][3] as $pilihan)
-                                    <tr>
-                                        <td><input type="radio" name="jawaban" onclick="onSelected('{{ $data_ujian[0][4] }}' ,'{{ $data_ujian[0][5] }}','{{ $data_ujian[0][6] }}','{{ $pilihan->label }}','{{ $data_ujian[0][2] }}')">{{ $pilihan->label }}). </td>
-                                        <td>{{ $pilihan->text }}</td>
-                                    </tr>
-                                @endforeach
-                            </table>
-                            @endif
-                        </div>
-                        <div class="card-footer">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <small style="color: red">
-                                        * Selesaikan ujian ini sebelum waktu ujian berakhir.<br>
-                                        * Selesaikan Soal ujian sebelum waktu pengerjaan soal habis. jika waktu pengerjaan soal habis maka sistem akan melewati soal ini tampa ada jawaban
-                                    </small>
-                                </div>
-                                <div class="col-md-6">
-                                    <button class="btn btn-success float-right" onclick="window.location.reload()">Lanjut Ke Soal Berikutnya</button>
+                            {{ csrf_field() }}
+                            <div class="card-body">
+                                @if(!empty($data_ujian[0][0]))
+                                {!! $data_ujian[0][0] !!}
+                                @endif
+                                <hr>
+                                @if(!empty($data_ujian[0][3]))
+                                <table>
+                                    @foreach($data_ujian[0][3] as $pilihan)
+                                        <tr>
+                                            <td><input type="radio" name="jawaban" onclick="onSelected('{{ $data_ujian[0][4] }}' ,'{{ $data_ujian[0][5] }}','{{ $data_ujian[0][6] }}','{{ $pilihan->label }}','{{ $data_ujian[0][2] }}')" required>{{ $pilihan->label }}). </td>
+                                            <td>{{ $pilihan->text }}</td>
+                                        </tr>
+                                    @endforeach
+                                </table>
+                                @endif
+                            </div>
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <small style="color: red">
+                                            * Selesaikan ujian ini sebelum waktu ujian berakhir.<br>
+                                            * Selesaikan soal sebelum waktu pengerjaan soal habis. jika waktu pengerjaan soal habis maka sistem akan melewati soal ini tampa ada jawaban
+                                        </small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <button type="submit" id="button-next" disabled class="btn btn-success float-right">Lanjut Ke Soal Berikutnya</button>
+                                    </div>
                                 </div>
                             </div>
+
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+            @else
+                <div class="col-md-12" >
+                    <div class="card card-primary" >
+                        <div class="card-header">
+
+                            <label class="float-right" id="demo"></label>
+                            <label class="float-left" id="demo2"></label>
+                            <!-- /.card-tools -->
                         </div>
+                        <!-- /.card-header -->
+
+                            <div class="card-body">
+                                <h1 style="text-align: center"> Ujian Telah Berkahir atau Soal Ujian Belum Dibuka</h1>
+                            </div>
                         <!-- /.card-body -->
                     </div>
                 </div>
@@ -132,19 +151,61 @@
 
             $("iframe").tooltip('hide');
 
-            // Set the date we're counting down to
-            var today = new Date();
-            today.setDate(parseInt('{{ $data_ujian[0]['date'] }}'));
-            today.setMonth(parseInt('{{ $data_ujian[0]['month'] }}'));
+            // Time Per soal
 
-            var date = today.getFullYear()+'-'+(today.getMonth() )+'-'+today.getDate();
-            today.setHours(parseInt('{{ $data_ujian[0]['jam'] }}'));
-            today.setMinutes(parseInt('{{ $data_ujian[0]['minute'] }}'));
-            var time =  today.getHours()+ ":" + today.getMinutes() + ":" + today.getSeconds();
+            endedUjian = function () {
 
-            var current_date = date+' '+time;
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
 
-            var countDownDate = new Date(current_date).getTime();
+                $.ajax({
+                    url:'{{ url('update-status') }}',
+                    type:'post',
+                    data:{
+                        'id_siswa': '{{$id_siswa }}',
+                        'id_tema_soal': '{{ $id_tema_siswa }}',
+                        '_token':'{{ csrf_token() }}'
+                    },success:function (result) {
+                        if(result.status_button==2){
+                            $('##button-next').prop('disabled', true);
+                        }
+                        Toast.fire({
+                            icon: result.status,
+                            title: result.message
+                        })
+
+                    }
+                })
+            }
+
+            TimeOperations = function(date,month,jam,minute){
+                var todays = new Date();
+                todays.setDate(parseInt(date));
+                todays.setMonth(parseInt(month));
+
+                var date2 = todays.getFullYear()+'-'+(todays.getMonth() )+'-'+todays.getDate();
+                todays.setHours(parseInt(jam));
+                todays.setMinutes(parseInt(minute));
+                var time2 =  todays.getHours()+ ":" + todays.getMinutes() + ":" + todays.getSeconds();
+
+                var current_date3 = date2+' '+time2;
+                var countDownDate3 = new Date(current_date3).getTime();
+                return countDownDate3;
+            }
+
+            @if(!empty($data_ujian[0]))
+                var countDownDate = TimeOperations('{{ $data_ujian[0]['date'] }}','{{ $data_ujian[0]['month'] }}','{{ $data_ujian[0]['jam'] }}','{{ $data_ujian[0]['minute'] }}');
+            @endif
+            var countDownDate2 = TimeOperations('{{ $date }}','{{ $month }}','{{ $jam }}','{{ $minute }}');
+
+            if(countDownDate2 < countDownDate){
+                countDownDate = countDownDate2;
+            }
+
 
             // Update the count down every 1 second
             var x = setInterval(function() {
@@ -168,24 +229,15 @@
                 // If the count down is finished, write some text
                 if (distance < 0) {
                     clearInterval(x);
-                    times_up('{{ $data_ujian[0][4] }}' ,'{{ $data_ujian[0][5] }}','{{ $data_ujian[0][6] }}','-','{{ $data_ujian[0][2] }}');
+                    @if(!empty($data_ujian[0]))
+                        times_up('{{ $data_ujian[0][4] }}' ,'{{ $data_ujian[0][5] }}','{{ $data_ujian[0][6] }}','-','{{ $data_ujian[0][2] }}');
+                    @endif
                     window.location.reload();
                 }
 
             }, 1000);
 
-            var todays = new Date();
-            todays.setDate(parseInt('{{ $date }}'));
-            todays.setMonth(parseInt('{{ $month }}'));
-
-            var date2 = todays.getFullYear()+'-'+(todays.getMonth() )+'-'+todays.getDate();
-            todays.setHours(parseInt('{{ $jam }}'));
-            todays.setMinutes(parseInt('{{ $minute }}'));
-            var time2 =  todays.getHours()+ ":" + todays.getMinutes() + ":" + todays.getSeconds();
-
-            var current_date2 = date2+' '+time2;
-
-            var countDownDate2 = new Date(current_date2).getTime();
+            //=============== Time Ujian
 
             // Update the count down every 1 second
             var y = setInterval(function() {
@@ -209,8 +261,12 @@
                 // If the count down is finished, write some text
                 if (distance < 0) {
                     clearInterval(x);
+                    if(countDownDate2 < countDownDate){
+                        countDownDate = countDownDate2;
+                    }
                     document.getElementById("demo2").innerHTML = "Waktu Pengerjaan Telah Berakhir";
                     window.location.href="{{ url('ujian') }}";
+                    endedUjian();
                     alert('Waktu Pengerjaan Soal telah selesai');
 
                 }
@@ -221,9 +277,13 @@
 
 
         <script>
+
+            refreshPage = function () {
+                return false;
+            }
+
             onSelected= function (id,id_siswa,id_ujian,jawaban,no_urut) {
-                alert(id+'===='+id_siswa+'===='+id_ujian+'===='+jawaban+'===='+no_urut);
-                const Toast = Swal.mixin({
+               const Toast = Swal.mixin({
                     toast: true,
                     position: 'top-end',
                     showConfirmButton: false,
@@ -246,9 +306,12 @@
                             icon: result.status,
                             title: result.message
                         })
+                        $('#button-next').attr('disable',false);
                     }
                 })
             }
+
+
 
             times_up= function (id,id_siswa,id_ujian,jawaban,no_urut) {
                 const Toast = Swal.mixin({
