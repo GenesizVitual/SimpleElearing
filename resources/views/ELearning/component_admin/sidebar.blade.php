@@ -34,6 +34,12 @@
                             <p>Siswa</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ url('soal') }}" class="nav-link">
+                            <i class="nav-icon fas fa-book-open"></i>
+                            <p>Soal</p>
+                        </a>
+                    </li>
                 @endif
 
                 @if(!empty(Session::get('id_guru')))

@@ -178,7 +178,11 @@ class Soal extends Controller
     }
 
     public function data_hasil_ujian($id){
-        $model =tbl_soal::where('id_guru', Session::get('id_guru'))->findOrFail($id);
+        if(!empty(Session::get('id_guru'))){
+            $model =tbl_soal::where('id_guru', Session::get('id_guru'))->findOrFail($id);
+        }else{
+            $model =tbl_soal::findOrFail($id);
+        }
         $row = array();
         $no =1;
 
