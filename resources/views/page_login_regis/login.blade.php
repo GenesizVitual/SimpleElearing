@@ -31,7 +31,7 @@
 	
 	<div class="limiter">
 		<div class="container-login100">
-			<div class="wrap-login100">
+			<div class="wrap-login100" style="width: 100%">
 				<form action="{{ url('login-check') }}" method="post" class="login100-form validate-form">
 					{{ csrf_field() }}
 					<span class="login100-form-title p-b-43">
