@@ -1,7 +1,39 @@
 @extends('ELearning.base')
 
 @section('css')
+    <style>
+        @font-face {
 
+            font-family: 'me_quran';
+
+            src: url('https://cdn.rawgit.com/KompiAjaib/font/master/me_quran.eot');
+
+            src: url('https://cdn.rawgit.com/KompiAjaib/font/master/me_quran.eot?#iefix') format('embedded-opentype'), url('https://cdn.rawgit.com/KompiAjaib/font/master/me_quran.woff') format('woff'), url('https://cdn.rawgit.com/KompiAjaib/font/master/me_quran.ttf') format('truetype'), url('https://cdn.rawgit.com/KompiAjaib/font/master/me_quran.svg#me_quran') format('svg');
+
+            font-weight: normal;
+
+            font-weight: 400;
+
+            font-style: normal;
+
+        }
+
+        .text-arab {
+
+            font-size: 22px;
+
+            line-height: 2.2;
+
+            font-family: me_quran, sans-serif;
+
+            font-weight: normal;
+
+            text-align: right;
+
+            direction: rtl;
+
+        }
+    </style>
 @stop
 
 @section('content')
@@ -41,7 +73,7 @@
                         </div>
                         <!-- /.card-header -->
                             {{ csrf_field() }}
-                            <div class="card-body">
+                            <div class="card-body @if($data_ujian[0][8]==1) text-arab @endif">
                                 @if(!empty($data_ujian[0][0]))
                                 {!! $data_ujian[0][0] !!}
                                 @endif
@@ -50,8 +82,29 @@
                                 <table>
                                     @foreach($data_ujian[0][3] as $pilihan)
                                         <tr>
-                                            <td><input type="radio" name="jawaban" onclick="onSelected('{{ $data_ujian[0][4] }}' ,'{{ $data_ujian[0][5] }}','{{ $data_ujian[0][6] }}','{{ $pilihan->label }}','{{ $data_ujian[0][2] }}')" required>{{ $pilihan->label }}). </td>
-                                            <td>{{ $pilihan->text }}</td>
+                                            <td>
+                                                <input type="radio" name="jawaban" onclick="onSelected('{{ $data_ujian[0][4] }}' ,'{{ $data_ujian[0][5] }}','{{ $data_ujian[0][6] }}','{{ $pilihan->label }}','{{ $data_ujian[0][2] }}')" required>
+                                                @if($data_ujian[0][8]==1)
+                                                    @if($pilihan->label=='a')
+                                                        {{ "أ" }} -
+                                                    @elseif($pilihan->label=='b')
+                                                        {{ "ب" }} -
+                                                    @elseif($pilihan->label=='c')
+                                                        {{ "ج" }} -
+                                                    @elseif($pilihan->label=='d')
+                                                        {{ "د" }} -
+                                                    @endif
+                                                @else
+                                                    {{ $pilihan->label }}).
+                                                @endif
+
+                                            </td>
+                                            <td>{{ $pilihan->text }}
+                                                @if(!empty($pilihan->gambar))
+                                                    <img src="{{ asset('gambar_bhs_arab/pilihan/'.$pilihan->gambar) }}" style="width: 10%; margin-right: 20px">
+                                                @endif
+                                            </td>
+
                                         </tr>
                                     @endforeach
                                 </table>
@@ -267,7 +320,7 @@
                     document.getElementById("demo2").innerHTML = "Waktu Pengerjaan Telah Berakhir";
                     window.location.href="{{ url('ujian') }}";
                     endedUjian();
-                    alert('Waktu Pengerjaan Soal telah selesai');
+//                    alert('Waktu Pengerjaan Soal telah selesai');
 
                 }
 

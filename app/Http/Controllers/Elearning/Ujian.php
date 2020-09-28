@@ -153,6 +153,7 @@ FROM tbl_daftar_soal WHERE id_tema_soal='.$mdoel_tema_ujian->id);
                 $row[] = Session::get('id_siswa'); //id_siswa
                 $row[] = $model_siswa_ujian->id; //id_ujian_siswa
                 $row[] = $data_soal->id_tema_soal;
+                $row[] = $model->status_lagunge;//status languange
                 $row['date']= intval(date('d', strtotime($waktu_sekarang )));
                 $row['month']= intval(date('m', strtotime($waktu_sekarang )));
                 $row['jam']= intval(date('H', strtotime($waktu_sekarang )));

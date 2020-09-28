@@ -42,7 +42,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0 text-dark">{{ $data->judul }}</h1>
+                <h1 class="m-0 text-dark">{{ $data->judul_soal }}</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
@@ -74,34 +74,66 @@
                                 <table style="width: 100%">
                                     <tr>
                                         <td colspan="2">
-                                            @if($data->soal ==0)
+                                            @if($data->status_lagunge==0)
                                                 {!! $soal->soal !!}
                                             @else
                                             <div class="text-arab">
-                                                {{$soal->soal}}
+                                                {!! $soal->soal !!}
                                             </div>
                                             @endif
                                         </td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">
-                                           @if(!empty($soal->gambar))
-                                            <img src="{{ asset('gambar_bhs_arab/'.$soal->gambar) }}" style="width: 50%">
-                                           @endif
+                                            @if($data->status_lagunge==0)
+                                                <img src="{{ asset('gambar_bhs_arab/'.$soal->gambar) }}" style="width: 20%">
+
+                                            @else
+                                               @if(!empty($soal->gambar))
+                                                    <div class="text-arab">
+                                                        <img src="{{ asset('gambar_bhs_arab/'.$soal->gambar) }}" style="width: 20%">
+                                                    </div>
+                                               @endif
+                                            @endif
                                         </td>
                                     </tr>
                                     @if(!empty($soal->linkToPilihan))
-                                        @foreach($soal->linkToPilihan->sortBy('label') as $data)
-                                            <tr
-                                                @if(!empty($soal->linkToJawaban))
-                                                        @if($soal->linkToJawaban->jawaban==$data->label)
-                                                            style="background-color: lawngreen"
+                                        @foreach($soal->linkToPilihan->sortBy('label') as $datas)
+                                            @if($data->status_lagunge == 0)
+                                                <tr
+                                                    @if(!empty($soal->linkToJawaban))
+                                                            @if($soal->linkToJawaban->jawaban==$datas->label)
+                                                                style="background-color: lawngreen"
+                                                            @endif
+                                                    @endif
+                                                >
+                                                    <td style="width: 15px">{{ $datas->label }}).</td>
+                                                    <td>{{ $datas->text }} </td>
+                                                </tr>
+                                            @else
+                                                <tr
+                                                        @if(!empty($soal->linkToJawaban))
+                                                        @if($soal->linkToJawaban->jawaban==$datas->label)
+                                                        style="background-color: lawngreen"
                                                         @endif
-                                                @endif
-                                            >
-                                                <td style="width: 15px">{{ $data->label }}).</td>
-                                                <td>{{ $data->text }} </td>
-                                            </tr>
+                                                        @endif
+                                                >
+                                                    <td>
+                                                        <h1 class="text-arab">{{ $datas->text }} @if(!empty($datas->gambar)) <img src="{{ asset('gambar_bhs_arab/pilihan/'.$datas->gambar) }}" style="width: 5%">@endif</h1>
+                                                    </td>
+                                                    <td style="width: 45px;">
+                                                            @if($datas->label=='a')
+                                                                <h5 class="text-arab">{{ "أ" }} .</h5>
+                                                            @elseif($datas->label=='b')
+                                                                <h5 class="text-arab">{{ "ب" }} .</h5>
+                                                            @elseif($datas->label=='c')
+                                                                <h5 class="text-arab">{{ "ج" }} .</h5>
+                                                            @elseif($datas->label=='d')
+                                                                <h5 class="text-arab">{{ "د" }} .</h5>
+                                                            @endif
+                                                        </td>
+                                                </tr>
+                                            @endif
                                         @endforeach
                                     @endif
                                 </table>

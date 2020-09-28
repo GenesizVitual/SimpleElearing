@@ -37,14 +37,19 @@
                         <h3>Soal No. {{ $no_urut }}</h3>
                     </div>
                     <div class="card-body">
-                        <form action="{{ url('daftar-soal') }}" method="post">
+                        <form action="{{ url('daftar-soal') }}" method="post" enctype="multipart/form-data">
                             {{ csrf_field() }}
                             <input type="hidden" name="no_urut" value="{{ $no_urut }}">
                             <input type="hidden" name="id_tema_soal" value="{{ $id_tema_soal }}">
                             <input type="hidden" name="status_lagunge" value="{{ $data_tema_soal->status_lagunge }}">
                             <div class="row">
                                 <div class="col-md-12">
-                                <textarea  @if($data_tema_soal->status_lagunge !=1) class="textarea" @else class="form-control" @endif placeholder="Masukan Soalnya disini" name="soal" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                                    <textarea  @if($data_tema_soal->status_lagunge !=1) class="textarea" @else class="form-control" @endif placeholder="Masukan Soalnya disini" name="soal" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                                </div>
+                                <div class="col-md-12">
+                                    @if($data_tema_soal->status_lagunge ==1)
+                                        <p>Gambar <input type="file" class="form-control"  name="gambar" placeholder="masukan gambar"></p>
+                                    @endif
                                 </div>
                                 <div class="col-md-6">
                                     <p>Pengaturan pilihan ganda</p>
@@ -56,7 +61,8 @@
                                                 <td>:</td>
                                                 <td>
                                                     <input type="hidden" class="form-control" name="label[]" value="{{ $pilihan_ganda }}" required></input>
-                                                    <textarea class="form-control" name="pilihan[]" required></textarea>
+                                                    <textarea class="form-control" name="pilihan[]" required style="width: 100%">-</textarea>
+                                                    <input type="file" class="forom-control" name="pilihan_gambar[]" style="width:100%">
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -91,20 +97,10 @@
                                                     <input type="time" class="form-control" value="00:05" name="waktu_kerja" placeholder="Waktu Pengerjaan setiap soal" required>
                                                 </td>
                                             </tr>
-                                            @if($data_tema_soal->status_lagunge ==1)
-                                                <tr>
-                                                    <td><h4>Gambar</h4></td>
-                                                    <td>:</td>
-                                                    <td>
-                                                        <input type="file" class="form-control"  name="gambar" placeholder="masukan gambar">
-                                                    </td>
-                                                </tr>
-                                            @endif
+
                                         <tr>
                                             <td colspan="3">
-                                             <br>
-                                             <br>
-                                                <button type="submit" class="btn btn-primary" style="width: 100%" onclick="return confirm('Pastikan soal yang anda masukan sudah benar ... ?')">Simpan</button>
+                                               <button type="submit" class="btn btn-primary" style="width: 100%" onclick="return confirm('Pastikan soal yang anda masukan sudah benar ... ?')">Simpan</button>
                                             </td>
                                         </tr>
                                     </table>
@@ -142,21 +138,41 @@
                             <input type="hidden" name="status_lagunge" value="{{ $data_tema_soal->status_lagunge }}">
                             <div class="row">
                                 <div class="col-md-12">
-                                <textarea @if($data_tema_soal->status_lagunge !=1) class="textarea" @else class="form-control" @endif placeholder="Masukan Soalnya disini" name="soal" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">@if($data_tema_soal->status_lagunge ==1) {{ $soal->soal }}@else {{ $soal->soal  }} @endif
+                                <textarea @if($data_tema_soal->status_lagunge !=1) class="textarea" @else class="form-control" @endif placeholder="Masukan Soalnya disini" name="soal" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">@if($data_tema_soal->status_lagunge ==1) {{ $soal->soal }}@else {{ $soal->soal  }} @endif</textarea>
+                                </div>
+                                @if($data_tema_soal->status_lagunge ==1)
+                                <div class="col-md-12">
+                                    @if(!empty($soal->gambar))
+                                        <img src="{{ asset('gambar_bhs_arab/'.$soal->gambar) }}" style="width: 25%">
+                                    @endif
+                                    <p>
+                                        Gambar
+                                        <input type="file" class="form-control"  name="gambar" value="{{ asset('gambar_bhs_arab/'.$soal->gambar) }}" placeholder="masukan gambar">
+                                    </p>
                                 </textarea>
                                 </div>
+                                @endif
                                 <div class="col-md-6">
                                     <p>Pengaturan pilihan ganda</p>
                                     <hr>
                                     <table style="width: 100%">
                                         @foreach($pilihan as $pilihan_ganda)
                                             <tr>
-                                                <td width="10"><h4>{{ $pilihan_ganda }}</h4></td>
+                                                <td width="10"><h4 style=" vertical-align:top;">{{ $pilihan_ganda }}</h4></td>
                                                 <td>:</td>
                                                 <td>
                                                     <input type="hidden" class="form-control" name="label[]" value="{{ $pilihan_ganda }}" required>
                                                     <textarea class="form-control" name="pilihan[]" required>@if(!empty($soal->linkToPilihan->where('label',$pilihan_ganda)->first())) {{ $soal->linkToPilihan->where('label',$pilihan_ganda)->first()->text }} @endif</textarea>
+                                                    @if(!empty($soal->linkToPilihan->where('label',$pilihan_ganda)->first()))
+                                                        @if(!empty($soal->linkToPilihan->where('label',$pilihan_ganda)->first()->gambar))
+                                                            <img src="{{ asset('gambar_bhs_arab/pilihan/'.$soal->linkToPilihan->where('label',$pilihan_ganda)->first()->gambar) }}" style="width: 20%">
+                                                        @endif
+                                                    @endif
+                                                    <input type="file" class="forom-control" name="pilihan_gambar[]" value="{{ asset('gambar_bhs_arab/pilihan/'.$soal->linkToPilihan->where('label',$pilihan_ganda)->first()->gambar) }}" style="width:100%">
                                                 </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3"style="background-color: coral"></td>
                                             </tr>
                                         @endforeach
                                     </table>
@@ -198,23 +214,7 @@
                                                 <input type="time" class="form-control" value="{{ $soal->waktu_kerja }}" name="waktu_kerja" placeholder="Waktu Pengerjaan setiap soal" required>
                                             </td>
                                         </tr>
-                                        @if($data_tema_soal->status_lagunge ==1)
-                                        <tr>
-                                            <td><h4>Gambar</h4></td>
-                                            <td>:</td>
-                                            <td>
-                                                <input type="file" class="form-control"  name="gambar" placeholder="masukan gambar">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="3" align="center">
-                                                @if(!empty($soal->gambar))
-                                                    <img src="{{ asset('gambar_bhs_arab/'.$soal->gambar) }}" style="width: 25%">
-                                                @endif
-                                            </td>
-                                        </tr>
 
-                                        @endif
                                         <tr>
                                             <td colspan="3">
                                                  <button type="submit" class="btn btn-primary" style="width: 100%">Simpan</button>

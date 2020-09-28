@@ -45,6 +45,7 @@ class DaftarSoal extends Controller
 
     public function store(Request $req)
     {
+
         $this->validate($req,[
             'no_urut'=>'required',
             'id_tema_soal'=>'required',
@@ -73,7 +74,7 @@ class DaftarSoal extends Controller
         if($model){
 
             if(!empty($gambar=$req->gambar)){
-                $imagename = time() . '.' . $gambar->getClientOriginalExtension();
+                $imagename = time().'--'.uniqid(). '.' . $gambar->getClientOriginalExtension();
 
                 $model_gambar = tbl_soal::findOrFail($model->id);
                 if(!empty($model_gambar->gambar))
@@ -100,10 +101,43 @@ class DaftarSoal extends Controller
             }
 
             foreach ($req->pilihan as $key => $text){
+
                 $model_pilihan_soal = Pilihan::updateOrCreate(
                     ['id_daftar_soal'=> $model->id,'label'=>$req->label[$key]],
                     ['text'=>$text]
                 );
+                if($model_pilihan_soal){
+
+                    if(!empty($gambar2=$req->pilihan_gambar[$key])){
+                        $imagename2 = time().'--'.uniqid().'.' . $gambar2->getClientOriginalExtension();
+
+                        $model_gambar_pilihan = Pilihan::findOrFail($model_pilihan_soal->id);
+                        if(!empty($model_gambar_pilihan->gambar))
+                        {
+                            $file_path =public_path('gambar_bhs_arab').'/pilihan/' . $model_gambar_pilihan->gambar;
+                            if (file_exists($file_path)) {
+                                @unlink($file_path);
+                            }
+                        }
+                        $model_gambar_pilihan->gambar = $imagename2;
+                        if(!empty($imagename2)){
+                            $gambar2->move(public_path('gambar_bhs_arab/pilihan/'), $imagename2);
+                        }
+                        $model_gambar_pilihan->save();
+                    }else{
+                        $model_gambar_pilihan = Pilihan::findOrFail($model_pilihan_soal->id);
+                        if(!empty($model_gambar_pilihan->gambar))
+                        {
+                            $file_path =public_path('gambar_bhs_arab').'/pilihan/' . $model_gambar_pilihan->gambar;
+                            if (file_exists($file_path)) {
+                                @unlink($file_path);
+                            }
+                        }
+                        $model_gambar_pilihan->gambar = '';
+                        $model_gambar_pilihan->save();
+                    }
+
+                }
             }
 
         }

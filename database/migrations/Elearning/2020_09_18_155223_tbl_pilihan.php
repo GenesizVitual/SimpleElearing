@@ -18,6 +18,7 @@ class TblPilihan extends Migration
             $table->foreignId('id_daftar_soal')->references('id')->on('tbl_daftar_soal')->onDelete('cascade');
             $table->enum('label',['-','a','b','c','d'])->default('-');
             $table->text('text');
+            $table->string('gambar')->nullable();
             $table->timestamps();
         });
     }
