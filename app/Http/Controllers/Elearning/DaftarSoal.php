@@ -31,7 +31,7 @@ class DaftarSoal extends Controller
             $last_no_urut = $data_no_urut->no_urut;
         }
 //        $last_no_urut = $data_backup->orderBy('no_urut','desc')->first();
-        $pangginate = $data_soal->orderBy('no_urut','asc')->paginate(20);
+        $pangginate = $data_soal->orderBy('no_urut','desc')->paginate(20);
         $data= [
             'data_soal'=>$pangginate,
             'pilihan'=> $this->option,

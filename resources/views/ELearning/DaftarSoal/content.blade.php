@@ -111,14 +111,14 @@
                     <!-- /.card-body -->
                 </div>
             </div>
-            @php($nomor_urut_soal=1)
+            @php($nomor_urut_soal=($no_urut-1))
 
             @foreach($data_soal as $key=> $soal)
             <div class="col-md-12">
                 <div class="card card-success">
                     <!-- /.card-header -->
                     <div class="card-header">
-                        <h4 class="card-title">Soal No. {{ $nomor_urut_soal++ }} </h4>
+                        <h4 class="card-title">Soal No. {{ $nomor_urut_soal-- }} </h4>
                         <div class="card-tools">
                             <form action="{{ url('daftar-soal/'.$soal->id) }}" method="post">
                                 {{ csrf_field() }}
