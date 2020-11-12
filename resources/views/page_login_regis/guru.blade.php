@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Login V18</title>
+	<title>Mts Ummusshabri Guru</title>
+
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-<!--===============================================================================================-->	
-	<link rel="icon" type="image/png" href="{{ asset('asset_LogReg/images/icons/favicon.ico') }}"/>
+<!--===============================================================================================-->
+	<link rel='icon' href='{{ asset('PESRI.png') }}'>
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="{{ asset('asset_LogReg/vendor/bootstrap/css/bootstrap.min.css') }}">
 <!--===============================================================================================-->
@@ -35,7 +36,7 @@
 				<form action="{{ url('login-guru') }}" method="post" class="login100-form validate-form">
 					{{ csrf_field() }}
 					<span class="login100-form-title p-b-43">
-						Silahkan masuk admin.
+						Silahkan masuk guru.
 					</span>
 					@if(!empty(Session::get('message_error')))
 						<span style="color: red">

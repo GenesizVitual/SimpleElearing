@@ -1,4 +1,4 @@
-@extends('ELearning.base')
+@extends('Elearning.base')
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('admin_asset/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
@@ -68,7 +68,7 @@
                                             </th>
                                             <th>
                                                 <input type="hidden" name="no_urut[]" value="{{ $no_urut }}">
-                                                <input name="skor_jabawan[]" type="number" value="{{ $data_tbl->score }}" class="form-control" placeholder="Masukan skor anda" required/>
+                                                <input name="skor_jabawan[]" type="number" min="1.0" max="10.0" step="0.1" value="{{ $data_tbl->score }}" class="form-control" placeholder="Masukan skor anda" required/>
                                             </th>
                                         </tr>
                                         @php($i++)

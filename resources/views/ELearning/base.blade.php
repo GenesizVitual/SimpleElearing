@@ -8,8 +8,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <link rel='icon' href='{{ asset('PESRI.png') }}'>
 
-  <title>AdminLTE 3 | Starter</title>
+  <title>Mts Ummussabri</title>
 
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="{{ asset('admin_asset/plugins/fontawesome-free/css/all.min.css') }}">
@@ -38,15 +39,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 
 </head>
-<body class="hold-transition sidebar-mini sidebar-collapse">
+<body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
 
   <!-- Navbar -->
-  @include('ELearning.component_admin.navbar')
+  @include('Elearning.component_admin.navbar')
   <!-- /.navbar -->
 
   <!-- Main Sidebar Container -->
-  @include('ELearning.component_admin.sidebar')
+  @include('Elearning.component_admin.sidebar')
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -55,17 +56,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- /.content-wrapper -->
 
   <!-- Control Sidebar -->
-  @include('ELearning.component_admin.Lsidebar')
+  @include('Elearning.component_admin.Lsidebar')
   <!-- /.control-sidebar -->
 
   <!-- Main Footer -->
   <footer class="main-footer">
     <!-- To the right -->
-    <div class="float-right d-none d-sm-inline">
-      Anything you want
-    </div>
+
     <!-- Default to the left -->
-    <strong>Copyright &copy; 2014-2019 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+    <strong>Copyright &copy; 2020 <a href="#">mtsummusshabri.com</a> All rights reserved.</strong>
   </footer>
 
 </div>
@@ -91,7 +90,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 </body>
 @yield('jsContainer')
-@include('ELearning.component_admin.toast')
+@include('Elearning.component_admin.toast')
 
 
 </html>

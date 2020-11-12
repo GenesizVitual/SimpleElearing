@@ -1,4 +1,4 @@
-@extends('ELearning.base')
+@extends('Elearning.base')
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('admin_asset/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
@@ -41,11 +41,16 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <a href="{{ url('hasil-ujian/'.$id_soal.'/grup-kelas') }}" class="btn btn-success">Grup berdasarkan kelas</a>
+                                </div>
+                            </div>
                             <table id="table-data" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
                                     <th rowspan="2">#</th>
+                                    <th rowspan="2">Tanggal Dan Waktu Ujian</th>
                                     <th rowspan="2">Nama</th>
                                     <th rowspan="2">Kode</th>
                                     <th rowspan="2">Kelas</th>
@@ -63,10 +68,11 @@
                                 @if(!empty($data_ujian))
                                     @foreach($data_ujian as $data)
                                         <tr>
-                                            <th >{{ $data['no'] }}</th>
+                                            <th >{{ $no++ }}</th>
+                                            <th >{{ $data['tgl_ujian'] }}</th>
                                             <th><a href="{{ url('detail-jawaban/'.$data['id_ujian_siswa'] ) }}">{{ $data['nama'] }}</a></th>
                                             <th>{{ $data['kode'] }}</th>
-                                            <th>{{ $data['kelas'] }}</th>
+                                            <th>{{ $data['kelas'] }} - {{ $data['label'] }}</th>
                                             <th>{{ $data['jenis_kelas'] }}</th>
                                             <td>{{ $data['jawaban_benar'] }}</td>
                                             <td>{{ $data['jawaban_salah'] }}</td>

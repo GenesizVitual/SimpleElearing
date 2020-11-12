@@ -21,6 +21,26 @@
                     {{--</a>--}}
                 {{--</li>--}}
                 @if(!empty(Session::get('id')))
+                    @if(Session::get('level') != 0)
+                        <li class="nav-item">
+                            <a href="{{ url('authority') }}" class="nav-link">
+                                <i class="nav-icon fas fa-user"></i>
+                                <p>Authority</p>
+                            </a>
+                        </li>
+                    @endif
+                    <li class="nav-item">
+                            <a href="{{ url('tahun-angkatan') }}" class="nav-link">
+                                <i class="nav-icon fas fa-calendar"></i>
+                                <p>Tahun Angkatan</p>
+                            </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('mata-pelajaran') }}" class="nav-link">
+                                <i class="nav-icon fas fa-bookmark"></i>
+                                <p>Mata Pelajaran</p>
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a href="{{ url('guru') }}" class="nav-link">
                             <i class="nav-icon fas fa-user"></i>
@@ -28,12 +48,21 @@
                         </a>
                     </li>
 
+
                     <li class="nav-item">
                         <a href="{{ url('siswa') }}" class="nav-link">
                             <i class="nav-icon fas fa-user"></i>
                             <p>Siswa</p>
                         </a>
                     </li>
+
+                        <li class="nav-item">
+                            <a href="{{ url('wali-siswa') }}" class="nav-link">
+                                <i class="nav-icon fas fa-user"></i>
+                                <p>Wali Siswa</p>
+                            </a>
+                        </li>
+
                     <li class="nav-item">
                         <a href="{{ url('soal') }}" class="nav-link">
                             <i class="nav-icon fas fa-book-open"></i>
@@ -49,6 +78,12 @@
                             <p>Soal</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ url('laporan-guru') }}" class="nav-link">
+                            <i class="nav-icon fas fa-book-open"></i>
+                            <p>Laporan</p>
+                        </a>
+                    </li>
                 @endif
 
                 @if(!empty(Session::get('id_siswa')))
@@ -56,6 +91,12 @@
                         <a href="{{ url('ujian') }}" class="nav-link">
                             <i class="nav-icon fas fa-book-open"></i>
                             <p>Ujian</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('laporan-ujian') }}" class="nav-link">
+                            <i class="nav-icon fas fa-book"></i>
+                            <p>Laporan</p>
                         </a>
                     </li>
                 @endif

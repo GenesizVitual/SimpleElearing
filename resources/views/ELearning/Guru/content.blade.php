@@ -1,4 +1,4 @@
-@extends('ELearning.base')
+@extends('Elearning.base')
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('admin_asset/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
@@ -29,18 +29,21 @@
     <div class="container-fluid">
         Halaman Ini akan menampilkan semua data guru.
         <div class="row">
-            <div class="col-md-12" style="padding-bottom: 10px">
-                <button type="button" class="btn btn-primary" style="width: 100%" data-toggle="modal" data-target="#modal-default"> Import Data Guru </button>
-            </div>
+            @if(Session::get('level') != 0)
+                <div class="col-md-12" style="padding-bottom: 10px">
+                    <button type="button" class="btn btn-primary" style="width: 100%" data-toggle="modal" data-target="#modal-default"> Import Data Guru </button>
+                </div>
+            @endif
             <div class="col-md-12">
                 <div class="card card-success">
                     <div class="card-header">
                         <h3 class="card-title">Tabel Guru</h3>
-
+                        @if(Session::get('level') != 0)
                         <div class="card-tools">
-                            <button type="button" class="btn btn-tool" onclick=" $('#modal-default-proses').modal('show');" ><i class="fas fa-plus"></i>
+                            <button type="button" class="btn btn-tool" data-target="#modal-default-proses" data-toggle="modal" data-backdrop="static" data-keyboard="false" ><i class="fas fa-plus"></i>
                             </button>
                         </div>
+                        @endif
                         <!-- /.card-tools -->
                     </div>
                     <!-- /.card-header -->
@@ -52,7 +55,9 @@
                                 <th>Kode</th>
                                 <th>Nama Guru</th>
                                 <th>Password</th>
+                                @if(Session::get('level') != 0)
                                 <th>Aksi</th>
+                                @endif
                             </tr>
                             </thead>
                             <tbody>
@@ -62,7 +67,8 @@
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $data_guru->kode }}</td>
                                     <td>{{ $data_guru->nama }}</td>
-                                    <td>{{ $data_guru->see_password }}</td>
+                                    <td>Password Anda terenkripsi</td>
+                                    @if(Session::get('level') != 0)
                                     <td>
                                         <form action="{{ url('guru/'.$data_guru->id) }}" method="post">
                                             {{ csrf_field() }}
@@ -73,6 +79,7 @@
                                             </div>
                                         </form>
                                     </td>
+                                    @endif
                                 </tr>
                             @endforeach
                             </tbody>
@@ -121,7 +128,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Panel Guru</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" onclick="$('#form').attr('action','{{ url('guru') }}')" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -187,13 +194,12 @@
                     url:  '{{ url('guru') }}/'+id+'/edit',
                     type: 'get',
                     success :function (result) {
-                        console.log(result);
-                        $('[name="kode"]').val(result.kode);
+                       $('[name="kode"]').val(result.kode);
                         $('[name="password"]').val(result.password);
                         $('[name="nama"]').val(result.nama);
                         $('[name="_method"]').val("put");
                         $('#form').attr('action','{{ url('guru') }}/'+id);
-                        $('#modal-default-proses').modal('show');
+                        $('#modal-default-proses').modal({backdrop: 'static', keyboard: false});
                     }
                 });
             }

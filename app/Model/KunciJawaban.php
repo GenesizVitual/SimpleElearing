@@ -14,4 +14,8 @@ class KunciJawaban extends Model
     public function linkToKunciJabawan(){
         return $this->hasOne('App\Model\JawabanSiswa','id_kunci_jawaban','id');
     }
+
+    public function linkToJawabanByNoUrut(){
+        return $this->hasOne('App\Model\JawabanSiswa','no_urut','no_urut');
+    }
 }

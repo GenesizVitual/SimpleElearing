@@ -35,6 +35,7 @@
     <thead>
     <tr style="background-color: green; color: white">
         <th rowspan="2">#</th>
+        <th rowspan="2">Tanggal Dan Waktu Ujian</th>
         <th rowspan="2">Nama</th>
         <th rowspan="2">Kode</th>
         <th rowspan="2">Kelas</th>
@@ -52,10 +53,11 @@
     @if(!empty($data_ujian))
         @foreach($data_ujian as $data)
             <tr>
-                <th >{{ $data['no'] }}</th>
+                <th >{{ $no++}}</th>
+                <th>{{ $data['tgl_ujian'] }}</th>
                 <th>{{ $data['nama'] }}</th>
                 <th>{{ $data['kode'] }}</th>
-                <th>{{ $data['kelas'] }}</th>
+                <th>{{ $data['kelas'] }} {{ '- '.$data['label'] }} </th>
                 <th>{{ $data['jenis_kelas'] }}</th>
                 <th>{{ $data['hasil']['jawaban_benar'] }}</th>
                 <th>{{ $data['hasil']['jawaban_salah'] }}</th>
@@ -76,7 +78,7 @@
 <script src="{{ asset('admin_asset/dist/js/adminlte.min.js') }}"></script>
 
 <script>
-
+    window.print()
 </script>
 </html>
 

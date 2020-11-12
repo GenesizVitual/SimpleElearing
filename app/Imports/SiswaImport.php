@@ -15,15 +15,20 @@ class SiswaImport implements ToModel,WithStartRow
     */
     public function model(array $row)
     {
-        return new Siswa([
-            'kode'     => $row[1],
-            'password'    => bcrypt($row[2]),
-            'see_password' => $row[2],
-            'nama' => $row[3],
-            'kelas' => $row[4],
-            'jenis_kelas' => $row[5],
-            'angkatan' => $row[6],
-        ]);
+        return  Siswa::firstOrCreate(
+            [
+                'kode'     => $row[1]
+            ],
+            [
+                'password'    => bcrypt($row[2]),
+                'see_password' => $row[2],
+                'nama' => $row[3],
+                'kelas' => $row[4],
+                'label_kelas' => $row[5],
+                'jenis_kelas' => $row[6],
+                'angkatan' => $row[7],
+            ]
+        );
     }
 
     public function startRow(): int

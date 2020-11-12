@@ -78,7 +78,7 @@
 <script src="{{ asset('admin_asset/dist/js/adminlte.min.js') }}"></script>
 
 <script>
-
+    window.print()
 </script>
 </html>
 

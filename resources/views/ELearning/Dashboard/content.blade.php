@@ -1,4 +1,4 @@
-@extends('ELearning.base')
+@extends('Elearning.base')
 
 @section('content')
 <!-- Content Header (Page header) -->

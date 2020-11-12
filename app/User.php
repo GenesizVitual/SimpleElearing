@@ -28,5 +28,15 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    public function LinkToCalonSiswa(){
+        return $this->hasOne('App\Model\PPSB\CalonSiswa','id_user','id');
+    }
 
+    public function LinkToOrangTua(){
+        return $this->hasOne('App\Model\PPSB\OrangTua','id_user','id');
+    }
+
+    public function LinkToKategoriSiswa(){
+        return $this->hasOne('App\Model\PPSB\KategoriSiswa','id_user','id');
+    }
 }

@@ -1,4 +1,4 @@
-@extends('ELearning.base')
+@extends('Elearning.base')
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('admin_asset/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
@@ -56,6 +56,7 @@
                                 <th>Judul Soal</th>
                                 <th>Jenis Kelas</th>
                                 <th>Kelas</th>
+                                <th>Semester</th>
                                 <th>Total Waktu</th>
                                 <th>Token</th>
                                 <th>Status</th>
@@ -68,13 +69,18 @@
                                 <tr>
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $data_soal->linkToGuru->nama }}</td>
-                                    <td>{{ $data_soal->judul_soal }}</td>
+                                    <td><p>{{ $data_soal->linkToMataPelajaran->mata_pelajaran }}</p> <p>{{ $data_soal->judul_soal }}</p></td>
                                     <td>{{ $data_soal->jenis_kelas }}</td>
                                     <td>{{ $data_soal->kelas }}</td>
+                                    <td>{{ $data_soal->semester }}</td>
                                     <td>
-                                        @if(!empty($data_soal->linkToDaftarSoal))
-                                            @php($time=DB::select('SELECT SEC_TO_TIME( SUM( TIME_TO_SEC( waktu_kerja ) ) ) AS timeSum   FROM `tbl_daftar_soal` where id_tema_soal='.$data_soal->id))
-                                            {{ $time[0]->timeSum }}
+                                        @if($data_soal->status_waktu==1)
+                                            @if(!empty($data_soal->linkToDaftarSoal))
+                                                @php($time=DB::select('SELECT SEC_TO_TIME( SUM( TIME_TO_SEC( waktu_kerja ) ) ) AS timeSum   FROM `tbl_daftar_soal` where id_tema_soal='.$data_soal->id))
+                                                {{ $time[0]->timeSum }}
+                                            @endif
+                                        @else
+                                            {{ $data_soal->time }}
                                         @endif
                                     </td>
                                     <td>{{ $data_soal->token }}</td>
@@ -185,6 +191,27 @@
                         {{ csrf_field() }}
                         <input type="hidden" name="_method" value="post">
                         <div class="form-group">
+                            <label>Tahun Angkatan</label>
+                            <select class="form-control select2" name="id_thn_angkatan" style="width: 100%;" required>
+                                @foreach($thn_angkatan as $data)
+                                    <option value="{{ $data->id }}">{{ $data->thn_lalu }}/{{ $data->thn_depan }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Mata Pelajaran</label>
+                            <select class="form-control select2" name="id_mata_pelajaran" style="width: 100%;" required>
+                                @foreach($mata_pelajaran as $data)
+                                    <option value="{{ $data->id }}">{{ $data->mata_pelajaran }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Semester</label><br>
+                            <input type="radio" name="semester" value="1" id="semester_1"  checked required> I
+                            <input type="radio" name="semester" value="2" id="semester_2" required> II
+                        </div>
+                        <div class="form-group">
                             <label>Guru</label>
                             <select class="form-control select2" name="id_guru" style="width: 100%;" required>
                                 <option>Pilih Nama Guru</option>
@@ -201,28 +228,50 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Jenis</label>
+                            <label>Pilihan Jenis Kelas</label>
                             <select class="form-control select2" name="jenis_kelas" style="width: 100%;" required>
-                                <option>Pilih Jenis Kelas</option>
+                                <option>Semua Jenis Kelas</option>
                                 @foreach($group_jenis_kelas as $jenis_kelas=> $data)
                                     <option value="{{ $jenis_kelas }}">{{ $jenis_kelas }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Jenis</label>
+                            <label>Pilihan Kelas</label>
                             <select class="form-control select2" name="kelas" style="width: 100%;" required>
-                                <option>Pilih Kelas</option>
+                                <option>Semua Kelas</option>
                                 @foreach($group_kelas as $kelas=> $data)
                                     <option value="{{ $kelas }}">{{ $kelas }}</option>
                                 @endforeach
                             </select>
                         </div>
+
                         <div class="form-group">
                             <label>Jenis Huruf</label><br>
-                            <input type="radio" name="status_lagunge" value="0" checked required> Alfabet <br>
-                            <input type="radio" name="status_lagunge" value="1" required> Unik<br>
+                            <input type="radio" name="status_lagunge" value="0" id="status_lagunge_0" checked required> Alfabet <br>
+                            <input type="radio" name="status_lagunge" value="1" id="status_lagunge_1" required> Unik<br>
                             <small style="color: orange;">*pilih jenis huruf selain menggunakan huruf alfabet</small>
+                        </div>
+                        <div class="form-group" >
+                            <label>Perhitungan Waktu Soal</label><br>
+                            <input type="radio" name="status_waktu" value="1" id="status_waktu_1" required onchange="timeClick(1)"> Waktu Persoal<br>
+                            <input type="radio" name="status_waktu" value="0" id="status_waktu_0" required onchange="timeClick(0)"> Waktu Seluruh Soal <br>
+                        </div>
+                        <div class="form-group" id="time">
+                            <label for="exampleInputFile">Durasi Soal</label>
+                            <div class="custom-file">
+                                {{--<input type="time" class="form-control" name="time" value="00:00">--}}
+                                <div class="row">
+                                    {{--@if(!empty($soal->waktu_kerja))--}}
+                                    {{--@endif--}}
+                                     <div class="col-md-6">
+                                        <input type="number" min="0" max="24" class="form-control" name="jam"  placeholder="Jam" >
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="number" min="0" max="59" class="form-control" name="menit" placeholder="Menit">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -249,6 +298,9 @@
     <script src="{{ asset('admin_asset/plugins/bs-custom-file-input/bs-custom-file-input.min.js') }}"></script>
     <script>
         $(function () {
+
+            $('#time').hide();
+
             const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
@@ -256,6 +308,13 @@
                 timer: 3000
             });
 
+            timeClick =function(value){
+                if(value==1){
+                    $('#time').hide();
+                }else{
+                    $('#time').show();
+                }
+            }
 
             $('.select2').select2()
 
@@ -278,9 +337,38 @@
                         $('[name="id_guru"]').val(result.id_guru).trigger('change');
                         $('[name="judul_soal"]').text(result.judul_soal);
                         $('[name="jenis_kelas"]').val(result.jenis_kelas).trigger('change');
+                        $('[name="id_thn_angkatan"]').val(result.id_thn_angkatan).trigger('change');
+                        $('[name="id_mata_pelajaran"]').val(result.id_mata_pelajaran).trigger('change');
                         $('[name="kelas"]').val(result.kelas).trigger('change');
                         $('[name="_method"]').val("put");
 //                        $('[name="time"]').val(result.time);
+
+                        if(result.status_waktu==1){
+                            $('#status_waktu_1').prop('checked',true);
+                        }else{
+                            $('#status_waktu_0').prop('checked',true);
+                        }
+
+                        if(result.status_lagunge==1){
+                            $('#status_lagunge_1').prop('checked',true);
+                        }else{
+                            $('#status_lagunge_0').prop('checked',true);
+                        }
+
+                        if(result.semester==1){
+                            $('#semester_1').prop('checked',true);
+                        }else{
+                            $('#semester_2').prop('checked',true);
+                        }
+
+                        if(result.status_waktu==0){
+                            $('#time').show();
+                            var time = result.time.split(':');
+                            $('[name="jam"]').val(time[0]);
+                            $('[name="menit"]').val(time[1]);
+                        }else{
+                            $('#time').hide();
+                        }
                         $('#form').attr('action','{{ url('soal') }}/'+id);
                         $('#modal-default-proses').modal('show');
                     }

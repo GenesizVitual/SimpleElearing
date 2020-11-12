@@ -22,4 +22,8 @@ class SiswaUjian extends Model
     public function linkToJawabanSiswa(){
         return $this->hasMany('App\Model\JawabanSiswa','id_siswa_ujian','id');
     }
+
+    public function linktoOnejawabansiswa(){
+        return $this->hasOne('App\Model\JawabanSiswa','id_siswa_ujian','id');
+    }
 }

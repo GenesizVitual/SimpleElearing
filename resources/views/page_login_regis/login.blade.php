@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Login V18</title>
+	<link rel='icon' href='{{ asset('PESRI.png') }}'>
+
+	<title>Mts Ummusshabri Siswa</title>
+
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-<!--===============================================================================================-->	
-	<link rel="icon" type="image/png" href="{{ asset('asset_LogReg/images/icons/favicon.ico') }}"/>
+
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="{{ asset('asset_LogReg/vendor/bootstrap/css/bootstrap.min.css') }}">
 <!--===============================================================================================-->
@@ -54,10 +56,8 @@
 						<span class="label-input100">Password</span>
 					</div>
 
-					<div class="flex-sb-m w-full p-t-3 p-b-32">
-						<div class="contact100-form-checkbox">
-
-						</div>
+					<div class="container-login100-form-btn" style="margin-bottom: 10px">
+						<a href="{{ url('login-wali-siswa') }}">Wali Siswa</a>
 					</div>
 
 					<div class="container-login100-form-btn">

@@ -1,4 +1,4 @@
-@extends('ELearning.base')
+@extends('Elearning.base')
 
 @section('css')
     <style>
@@ -34,6 +34,9 @@
 
         }
     </style>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.8.1/baguetteBox.min.css">
+    <link rel="stylesheet" href="{{ asset('thumbnail/thumbnail-gallery.css') }}">
 @stop
 
 @section('content')
@@ -58,7 +61,7 @@
 
 <!-- Main content -->
 <div class="content">
-    <div class="container-fluid">
+    <div class="container-fluid tz-gallery">
         <div class="row">
             @if(!empty($data->linkToDaftarSoal))
                 @php($no=1)
@@ -73,9 +76,9 @@
                             <div class="card-body">
                                 <table style="width: 100%">
                                     <tr>
-                                        <td colspan="2">
+                                        <td colspan="2" style="padding-left: 2%;padding-right: 2%">
                                             @if($data->status_lagunge==0)
-                                                {!! $soal->soal !!}
+                                                {!! str_replace('1.','', $soal->soal) !!}
                                             @else
                                             <div class="text-arab">
                                                 {!! $soal->soal !!}
@@ -86,12 +89,17 @@
                                     <tr>
                                         <td colspan="2">
                                             @if($data->status_lagunge==0)
-                                                <img src="{{ asset('gambar_bhs_arab/'.$soal->gambar) }}" style="width: 20%">
-
+                                                @if(!empty($soal->gambar))
+                                                    <a class="lightbox" href="@if(empty(SiteUrl::getUrl())) {{ asset('gambar_bhs_arab/'.$soal->gambar) }} @else {{ asset('gambar_bhs_arab/'.$soal->gambar) }} @endif">
+                                                        <img src="@if(empty(SiteUrl::getUrl())) {{ asset('gambar_bhs_arab/'.$soal->gambar) }} @else {{ asset('gambar_bhs_arab/'.$soal->gambar) }} @endif" style="width: 50%; ">
+                                                    </a>
+                                                @endif
                                             @else
                                                @if(!empty($soal->gambar))
                                                     <div class="text-arab">
-                                                        <img src="{{ asset('gambar_bhs_arab/'.$soal->gambar) }}" style="width: 20%">
+                                                        <a class="lightbox" href="{{ asset('gambar_bhs_arab/'.$soal->gambar) }}">
+                                                            <img src="{{ asset('gambar_bhs_arab/'.$soal->gambar) }}" style="width: 100%; ">
+                                                        </a>
                                                     </div>
                                                @endif
                                             @endif
@@ -108,18 +116,33 @@
                                                     @endif
                                                 >
                                                     <td style="width: 15px">{{ $datas->label }}).</td>
-                                                    <td>{{ $datas->text }} </td>
+                                                    <td>
+                                                        {{ $datas->text }}
+                                                    @if(!empty($datas->gambar))
+                                                            @if(!empty($datas->gambar))
+                                                                <a class="lightbox" href="@if(empty(SiteUrl::getUrl())){{ asset('gambar_bhs_arab/pilihan/'.$datas->gambar) }} @else {{ asset('gambar_bhs_arab/pilihan/'.$datas->gambar) }} @endif">
+                                                                    <img src="@if(empty(SiteUrl::getUrl())){{ asset('gambar_bhs_arab/pilihan/'.$datas->gambar) }} @else {{ asset('gambar_bhs_arab/pilihan/'.$datas->gambar) }} @endif" style="width: 30%; padding-left: 5%; ">
+                                                                </a>
+                                                            @endif
+                                                        @endif
+                                                    </td>
+                                                    <td></td>
                                                 </tr>
                                             @else
                                                 <tr
                                                         @if(!empty($soal->linkToJawaban))
-                                                        @if($soal->linkToJawaban->jawaban==$datas->label)
-                                                        style="background-color: lawngreen"
-                                                        @endif
+                                                            @if($soal->linkToJawaban->jawaban==$datas->label)
+                                                                style="background-color: lawngreen"
+                                                            @endif
                                                         @endif
                                                 >
                                                     <td>
-                                                        <h1 class="text-arab">{{ $datas->text }} @if(!empty($datas->gambar)) <img src="{{ asset('gambar_bhs_arab/pilihan/'.$datas->gambar) }}" style="width: 5%">@endif</h1>
+                                                        <h1 class="text-arab">{{ $datas->text }}
+                                                            @if(!empty($datas->gambar))
+                                                                <a class="lightbox" href="@if(empty(SiteUrl::getUrl())){{ asset('gambar_bhs_arab/pilihan/'.$datas->gambar) }} @else {{ SiteUrl::getUrl().'gambar_bhs_arab/pilihan/'.$datas->gambar }} @endif">
+                                                                    <img src="@if(empty(SiteUrl::getUrl())){{ asset('gambar_bhs_arab/pilihan/'.$datas->gambar) }} @else {{ SiteUrl::getUrl().'gambar_bhs_arab/pilihan/'.$datas->gambar }} @endif" style="width: 10%">
+                                                                </a>
+                                                            @endif</h1>
                                                     </td>
                                                     <td style="width: 45px;">
                                                             @if($datas->label=='a')
@@ -152,6 +175,11 @@
 @stop
 
 @section('jsContainer')
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.8.1/baguetteBox.min.js"></script>
+    <script>
+        baguetteBox.run('.tz-gallery');
+    </script>
         {{--<script src="{{ asset('PDFObject/pdfobject.js') }}"></script>--}}
         {{--<script>PDFObject.embed("https://drive.google.com/file/d/1YlISufiCbleEF3gsluP7tjM5f58L2D3a/view?usp=sharing", "#example1");</script>--}}
 @stop

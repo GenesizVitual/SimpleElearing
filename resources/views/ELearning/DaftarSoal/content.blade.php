@@ -1,9 +1,8 @@
-@extends('ELearning.base')
+@extends('Elearning.base')
 
 @section('css')
     <!-- summernote -->
     <link rel="stylesheet" href="{{ asset('admin_asset/plugins/summernote/summernote-bs4.css') }}">
-
 
  @stop
 
@@ -47,9 +46,9 @@
                                     <textarea  @if($data_tema_soal->status_lagunge !=1) class="textarea" @else class="form-control" @endif placeholder="Masukan Soalnya disini" name="soal" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
                                 </div>
                                 <div class="col-md-12">
-                                    @if($data_tema_soal->status_lagunge ==1)
+                                    {{--@if($data_tema_soal->status_lagunge ==1)--}}
                                         <p>Gambar <input type="file" class="form-control"  name="gambar" placeholder="masukan gambar"></p>
-                                    @endif
+                                    {{--@endif--}}
                                 </div>
                                 <div class="col-md-6">
                                     <p>Pengaturan pilihan ganda</p>
@@ -87,19 +86,27 @@
                                                 <td><h4>Skor</h4></td>
                                                 <td>:</td>
                                                 <td>
-                                                    <input type="number" class="form-control" name="skor" placeholder="Nilai Skor Soal" value="0" required/>
+                                                    <input type="number" min="1.0" max="10.0" step="0.1" class="form-control" name="skor" placeholder="Nilai Skor Soal, gunakan koma(,) untuk skor angka desimal" value="0.0" required/>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td><h4>Waktu</h4></td>
                                                 <td>:</td>
                                                 <td>
-                                                    <input type="time" class="form-control" value="00:05" name="waktu_kerja" placeholder="Waktu Pengerjaan setiap soal" required>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <input type="number" min="0" max="24" class="form-control" name="jam" placeholder="Jam" @if($data_tema_soal->status_waktu==0) readonly @endif required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <input type="number" min="0" max="59" class="form-control" name="menit" placeholder="Menit" @if($data_tema_soal->status_waktu==0) readonly @endif required>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                             </tr>
 
                                         <tr>
                                             <td colspan="3">
+                                                <br>
                                                <button type="submit" class="btn btn-primary" style="width: 100%" onclick="return confirm('Pastikan soal yang anda masukan sudah benar ... ?')">Simpan</button>
                                             </td>
                                         </tr>
@@ -111,14 +118,14 @@
                     <!-- /.card-body -->
                 </div>
             </div>
-            @php($nomor_urut_soal=($no_urut-1))
+            {{--@php($nomor_urut_soal=($no_urut-1))--}}
 
             @foreach($data_soal as $key=> $soal)
             <div class="col-md-12">
                 <div class="card card-success">
                     <!-- /.card-header -->
                     <div class="card-header">
-                        <h4 class="card-title">Soal No. {{ $nomor_urut_soal-- }} </h4>
+                        <h4 class="card-title">Soal No. {{ $soal->no_urut }} </h4>
                         <div class="card-tools">
                             <form action="{{ url('daftar-soal/'.$soal->id) }}" method="post">
                                 {{ csrf_field() }}
@@ -138,20 +145,20 @@
                             <input type="hidden" name="status_lagunge" value="{{ $data_tema_soal->status_lagunge }}">
                             <div class="row">
                                 <div class="col-md-12">
-                                <textarea @if($data_tema_soal->status_lagunge !=1) class="textarea" @else class="form-control" @endif placeholder="Masukan Soalnya disini" name="soal" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">@if($data_tema_soal->status_lagunge ==1) {{ $soal->soal }}@else {{ $soal->soal  }} @endif</textarea>
+                                <textarea class="textarea"  placeholder="Masukan Soalnya disini" name="soal" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">@if($data_tema_soal->status_lagunge ==1) {{ $soal->soal }}@else {{ $soal->soal  }} @endif</textarea>
                                 </div>
-                                @if($data_tema_soal->status_lagunge ==1)
+                                {{--@if($data_tema_soal->status_lagunge ==1)--}}
                                 <div class="col-md-12">
                                     @if(!empty($soal->gambar))
-                                        <img src="{{ asset('gambar_bhs_arab/'.$soal->gambar) }}" style="width: 25%">
+                                        <img src="@if(empty(SiteUrl::getUrl())) {{ asset('gambar_bhs_arab/'.$soal->gambar) }} @else {{ SiteUrl::getUrl().'gambar_bhs_arab/'.$soal->gambar }} @endif" style="width: 25%">
                                     @endif
                                     <p>
                                         Gambar
-                                        <input type="file" class="form-control"  name="gambar" value="{{ asset('gambar_bhs_arab/'.$soal->gambar) }}" placeholder="masukan gambar">
+                                        <input type="file" class="form-control"  name="gambar" placeholder="masukan gambar">
                                     </p>
                                 </textarea>
                                 </div>
-                                @endif
+                                {{--@endif--}}
                                 <div class="col-md-6">
                                     <p>Pengaturan pilihan ganda</p>
                                     <hr>
@@ -165,10 +172,10 @@
                                                     <textarea class="form-control" name="pilihan[]" required>@if(!empty($soal->linkToPilihan->where('label',$pilihan_ganda)->first())) {{ $soal->linkToPilihan->where('label',$pilihan_ganda)->first()->text }} @endif</textarea>
                                                     @if(!empty($soal->linkToPilihan->where('label',$pilihan_ganda)->first()))
                                                         @if(!empty($soal->linkToPilihan->where('label',$pilihan_ganda)->first()->gambar))
-                                                            <img src="{{ asset('gambar_bhs_arab/pilihan/'.$soal->linkToPilihan->where('label',$pilihan_ganda)->first()->gambar) }}" style="width: 20%">
+                                                            <img src=" @if(empty(SiteUrl::getUrl())) {{ asset('gambar_bhs_arab/pilihan/'.$soal->linkToPilihan->where('label',$pilihan_ganda)->first()->gambar) }} @else {{ SiteUrl::getUrl().'gambar_bhs_arab/pilihan/'.$soal->linkToPilihan->where('label',$pilihan_ganda)->first()->gambar }} @endif" style="width: 20%">
                                                         @endif
                                                     @endif
-                                                    <input type="file" class="forom-control" name="pilihan_gambar[]" value="{{ asset('gambar_bhs_arab/pilihan/'.$soal->linkToPilihan->where('label',$pilihan_ganda)->first()->gambar) }}" style="width:100%">
+                                                    <input type="file" class="form-control" name="pilihan_gambar[]" style="width:100%">
                                                 </td>
                                             </tr>
                                             <tr>
@@ -178,7 +185,7 @@
                                     </table>
                                 </div>
                                 <div class="col-md-6">
-                                    <p>Pengaturan Soal </p>
+                                    <p>Pengaturan Soal</p>
                                     <hr>
                                     <table style="width: 100%">
                                         <tr>
@@ -200,7 +207,7 @@
                                             <td><h4>Skor</h4></td>
                                             <td>:</td>
                                             <td>
-                                                <input type="number" class="form-control" name="skor" placeholder="Nilai Skor Soal"
+                                                <input type="number" min="1.0" max="10.0" step="0.1" class="form-control" name="skor" placeholder="Nilai Skor Soal"
                                                        @if(!empty($soal->linkToJawaban))
                                                             value="{{ $soal->linkToJawaban->score }}"
                                                        @endif
@@ -211,12 +218,24 @@
                                             <td><h4>Waktu</h4></td>
                                             <td>:</td>
                                             <td>
-                                                <input type="time" class="form-control" value="{{ $soal->waktu_kerja }}" name="waktu_kerja" placeholder="Waktu Pengerjaan setiap soal" required>
+                                                {{--<input type="time" class="form-control" value="{{ $soal->waktu_kerja }}" @if($data_tema_soal->status_waktu==0) readonly @endif name="waktu_kerja" placeholder="Waktu Pengerjaan setiap soal" required>--}}
+                                                <div class="row">
+                                                    {{--@if(!empty($soal->waktu_kerja))--}}
+                                                    {{--@endif--}}
+                                                        @php($waktukerja = explode(':',$soal->waktu_kerja))
+                                                        <div class="col-md-6">
+                                                         <input type="number" min="0" max="24" class="form-control" name="jam" value="{{ $waktukerja[0] }}" placeholder="Jam" @if($data_tema_soal->status_waktu==0) readonly @endif required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <input type="number" min="0" max="59" class="form-control" name="menit" value="{{ $waktukerja[1] }}" placeholder="Menit" @if($data_tema_soal->status_waktu==0) readonly @endif required>
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
 
                                         <tr>
                                             <td colspan="3">
+                                                <br>
                                                  <button type="submit" class="btn btn-primary" style="width: 100%">Simpan</button>
                                             </td>
                                         </tr>
@@ -240,17 +259,20 @@
 
 @section('jsContainer')
     <!-- Summernote -->
+
+
     <script src="{{ asset('admin_asset/plugins/summernote/summernote-bs4.min.js') }}"></script>
     <script>
         $(function () {
             // Summernote
-            @if($data_tema_soal->status_lagunge !=1)
+            {{--@if($data_tema_soal->status_lagunge !=1)--}}
             $('.textarea').summernote({
                 fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana', 'Amiri','me_quran'],
                 fontNamesIgnoreCheck: ['me_quran'],
             });
-            @endif
+            {{--@endif--}}
 
         })
     </script>
+
 @stop

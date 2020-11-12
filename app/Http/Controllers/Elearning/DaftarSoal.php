@@ -31,7 +31,7 @@ class DaftarSoal extends Controller
             $last_no_urut = $data_no_urut->no_urut;
         }
 //        $last_no_urut = $data_backup->orderBy('no_urut','desc')->first();
-        $pangginate = $data_soal->orderBy('no_urut','desc')->paginate(20);
+        $pangginate = $data_soal->orderBy('no_urut','desc')->paginate(50);
         $data= [
             'data_soal'=>$pangginate,
             'pilihan'=> $this->option,
@@ -46,6 +46,7 @@ class DaftarSoal extends Controller
     public function store(Request $req)
     {
 
+
         $this->validate($req,[
             'no_urut'=>'required',
             'id_tema_soal'=>'required',
@@ -54,21 +55,31 @@ class DaftarSoal extends Controller
             'pilihan'=>'required',
             'jawaban'=>'required',
             'skor'=>'required',
-            'waktu_kerja'=>'required',
+//            'jam'=>'required',
+//            'menit'=>'required',
             'status_lagunge'=>'required',
-
         ]);
 
+        $jam = 0;
+        $menit = 0;
+
+        if(!empty($req->jam)){
+            $jam = $req->jam;
+        }
+        if(!empty($req->menit)){
+            $menit = $req->menit;
+        }
+        $waktu_kerja = $jam.':'.$menit.':00';
 
         if($req->status_lagunge==0){
-            $soal = $this->b64toUrl($req->soal);
+            $soal = $req->soal;
         }else{
             $soal = $req->soal;
         }
 
         $model = tbl_soal::updateOrCreate(
             ['id_guru'=>Session::get('id_guru'),'id_tema_soal'=>$req->id_tema_soal,'no_urut'=> $req->no_urut],
-            ['soal'=>$soal,'waktu_kerja'=> $req->waktu_kerja]
+            ['soal'=>$soal,'waktu_kerja'=> $waktu_kerja]
         );
 
         if($model){
@@ -108,7 +119,8 @@ class DaftarSoal extends Controller
                 );
                 if($model_pilihan_soal){
 
-                    if(!empty($gambar2=$req->pilihan_gambar[$key])){
+                    if(!empty($req->pilihan_gambar[$key])){
+                        $gambar2=$req->pilihan_gambar[$key];
                         $imagename2 = time().'--'.uniqid().'.' . $gambar2->getClientOriginalExtension();
 
                         $model_gambar_pilihan = Pilihan::findOrFail($model_pilihan_soal->id);

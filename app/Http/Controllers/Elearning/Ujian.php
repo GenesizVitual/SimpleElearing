@@ -15,6 +15,8 @@ use Session;
 class Ujian extends Controller
 {
     //
+    private $id_daftar_soal;
+
     public function index(){
         $session_kode_siswa = Session::get('kode');
         $session_id_siswa = Session::get('id_siswa');
@@ -77,31 +79,60 @@ class Ujian extends Controller
 //        return view('Elearning.Ujian.view_dokumen', $data)->with('message_info','Ujian Telah dimulai, silahkan jawab sampai waktu habis');
 //    }
 
-    public function ikut_ujian(Request $req){
-        $this->validate($req,[
-            'id_siswa'=> 'required',
-            'kode_siswa'=> 'required',
-            'token'=> 'required',
+    public function ikut_ujian(Request $req)
+    {
+        $this->validate($req, [
+            'id_siswa' => 'required',
+            'kode_siswa' => 'required',
+            'token' => 'required',
         ]);
 
-        $data_tema_ujian = tbl_soal::where('status','1')->where('kelas', Session::get('kelas'))->where('jenis_kelas', Session::get('jenis_kelas'))->where('token',$req->token);
+        $data_tema_ujian = tbl_soal::where('status', '1')->where('token', $req->token);
+//        dd($data_tema_ujian->first());
         if($data_tema_ujian->count() <= 0){
             return redirect()->back()->with('message_info','Token ujian yang anda masukan salah atau ujian yang anda ikuti belum dimulai');
         }
 
-        $mdoel_tema_ujian = $data_tema_ujian->first();
+        if (strcmp($data_tema_ujian->first()->jenis_kelas, 'Semua Jenis Kelas') != 0) {
+            $data_tema_ujian->where('jenis_kelas', Session::get('jenis_kelas'));
+        }
+
+
+        if (strcmp($data_tema_ujian->first()->kelas, 'Semua Kelas') != 0) {
+//                $kelas_split = explode(Session::get('kelas'), ' ');
+             $data_tema_ujian->where('kelas', 'like', '%'.Session::get('kelas').'%');
+        }
+
+        $req->session()->put('id_tema_soal', $data_tema_ujian->first()->id);
+
+        return redirect('jawaban-soal')->with('message_info','Ujian Telah dimulai, silahkan jawab sampai waktu habis');
+//        return view('Elearning.Ujian.view_dokumen', $data)->with('message_info','Ujian Telah dimulai, silahkan jawab sampai waktu habis');
+    }
+
+
+    public function data_ujian($mdoel_tema_ujian, $id_daftar_soal=0){
         #ambil waktu total semua soal
-        $waktu_total_ujian = DB::select('SELECT  SEC_TO_TIME( SUM( TIME_TO_SEC( waktu_kerja ) ) ) AS timeSum, SEC_TO_TIME( SUM( TIME_TO_SEC( waktu_kerja ) )/count(id) ) as waktu_rata_rata 
-FROM tbl_daftar_soal WHERE id_tema_soal='.$mdoel_tema_ujian->id);
-        $waktu_kerja = date('H:i:s',strtotime($waktu_total_ujian[0]->timeSum));
+//        dd($id_daftar_soal);
+
+        if($mdoel_tema_ujian->status_waktu==0){
+            $waktu_total_ujian = $mdoel_tema_ujian->time;
+            $waktu_kerja = date('H:i:s',strtotime($waktu_total_ujian));
+        }else{
+            $waktu_total_ujian = DB::select('SELECT  SEC_TO_TIME( SUM( TIME_TO_SEC( waktu_kerja ) ) ) AS timeSum, SEC_TO_TIME( SUM( TIME_TO_SEC( waktu_kerja ) )/count(id) ) as waktu_rata_rata 
+            FROM tbl_daftar_soal WHERE id_tema_soal='.$mdoel_tema_ujian->id);
+            $waktu_kerja = date('H:i:s',strtotime($waktu_total_ujian[0]->timeSum));
+        }
+
         $get_hour = intval(date('H', strtotime($waktu_kerja)));
         $get_minute = intval(date('i', strtotime($waktu_kerja)));
+
         $waktu_sekarang = date('Y-m-d H:i:s', strtotime('+'.$get_hour.' hours +'.$get_minute.' minute'));
 
         $model = SiswaUjian::firstOrCreate(
-            ['id_tema_soal'=> $mdoel_tema_ujian->id,'id_siswa'=>$req->id_siswa],
+            ['id_tema_soal'=> $mdoel_tema_ujian->id,'id_siswa'=>Session::get('id_siswa')],
             ['status'=> '1', 'waktu_mulai'=>date('Y-m-d H:i:s', strtotime($waktu_sekarang))]
         );
+
 
 
         if($model->status==1){
@@ -114,13 +145,11 @@ FROM tbl_daftar_soal WHERE id_tema_soal='.$mdoel_tema_ujian->id);
             $date_format = date('Y/m/d H:i:s');
         }
 
-
         $data = [
-            'data_ujian'=>$this->suffle_soal($mdoel_tema_ujian,$model),
-            'id_siswa'=> $req->id_siswa,
+            'data_ujian'=>$this->suffle_soal($mdoel_tema_ujian,$model, $id_daftar_soal=$id_daftar_soal),
+            'id_siswa'=> Session::get('id_siswa'),
             'id_tema_siswa'=> $mdoel_tema_ujian->id,
             'id_siswa_ujian'=> $model->id,
-            'kode_siswa'=> $req->kode_siswa,
             'count_down_time'=>strtotime($date_format),
             'date'=> intval(date('d', strtotime($date_format))),
             'month'=> intval(date('m', strtotime($date_format))),
@@ -128,22 +157,34 @@ FROM tbl_daftar_soal WHERE id_tema_soal='.$mdoel_tema_ujian->id);
             'minute'=> intval(date('i', strtotime($date_format))),
         ];
 
+        return $data;
 
-        return view('Elearning.Ujian.view_dokumen', $data)->with('message_info','Ujian Telah dimulai, silahkan jawab sampai waktu habis');
     }
 
-    public function suffle_soal($model,$model_siswa_ujian){
-        $data = $model->linkToDaftarSoal;
+
+    public function suffle_soal($model,$model_siswa_ujian, $id_daftar_soal){
+        if($id_daftar_soal !=0){
+            $data = $model->linkToDaftarSoal->where('id',$id_daftar_soal);
+        }else{
+            $data = $model->linkToDaftarSoal;
+        }
 
         $array = [];
         foreach ($data as $data_soal){
             $row = [];
-            if(empty($data_soal->linkToJawaban->linkToKunciJabawan)){
+            if($model->status_waktu==1) {
+                $waktu_kerja = date('H:i:s', strtotime($data_soal->waktu_kerja));
+            }else{
+                $waktu_kerja = date('H:i:s', strtotime($model->time));
+            }
+            $get_hour = intval(date('H', strtotime($waktu_kerja)));
+            $get_minute = intval(date('i', strtotime($waktu_kerja)));
+            $waktu_sekarang = date('Y-m-d H:i:s', strtotime('+'.$get_hour.' hours +'.$get_minute.' minute'));
+//            $id_kunci_jawaban = $data_soal->linkToJawaban->linkToKunciJabawan->id_kunci_jawaban;
+            $id_kunci_jawaban = $data_soal->linkToJawaban->id;
+            $id_jawaban_siswa = JawabanSiswa::where('id_siswa', Session::get('id_siswa'))->where('id_kunci_jawaban',$id_kunci_jawaban)->first();
 
-                $waktu_kerja = date('H:i:s',strtotime($data_soal->waktu_kerja));
-                $get_hour = intval(date('H', strtotime($waktu_kerja)));
-                $get_minute = intval(date('i', strtotime($waktu_kerja)));
-                $waktu_sekarang = date('Y-m-d H:i:s', strtotime('+'.$get_hour.' hours +'.$get_minute.' minute'));
+//            dd($id_jawaban_siswa);
 
                 $row[] = $data_soal->soal;
                 $row[] = $data_soal->waktu_kerja;
@@ -154,25 +195,54 @@ FROM tbl_daftar_soal WHERE id_tema_soal='.$mdoel_tema_ujian->id);
                 $row[] = $model_siswa_ujian->id; //id_ujian_siswa
                 $row[] = $data_soal->id_tema_soal;
                 $row[] = $model->status_lagunge;//status languange
+                $row[] = $data_soal->gambar;//status languange
                 $row['date']= intval(date('d', strtotime($waktu_sekarang )));
                 $row['month']= intval(date('m', strtotime($waktu_sekarang )));
                 $row['jam']= intval(date('H', strtotime($waktu_sekarang )));
                 $row['minute']= intval(date('i', strtotime($waktu_sekarang )));
 
+            if($id_daftar_soal !=0){
                 $array[] = $row;
+            }else{
+                if(empty($id_jawaban_siswa)){
+                    $array[] = $row;
+                }
             }
+
+
         }
         $suffle_array = shuffle($array);
+//            dd($array);
 //        $new_array=array_rand($array, 2);
         return $array;
     }
 
 
+
+    public function halaman_soal_ujian(){
+        if(empty(Session::get('id_tema_soal'))){
+            return redirect('ujian')->with('message_info','Soal belum buka');
+        }
+        $data_tema_ujian = tbl_soal::where('id',Session::get('id_tema_soal'))->first();
+        $data = $this->data_ujian($data_tema_ujian);
+        $data['data_jawaban'] = $data_tema_ujian;
+        return view('Elearning.Ujian.view_dokumen', $data);
+    }
+
+    public function halaman_soal_ujian_persoal($id){
+        if(empty(Session::get('id_tema_soal'))){
+            return redirect('ujian')->with('message_info','Soal belum buka');
+        }
+        $data_tema_ujian = tbl_soal::where('id',Session::get('id_tema_soal'))->first();
+        $data = $this->data_ujian($data_tema_ujian, $id);
+        $data['data_jawaban'] = $data_tema_ujian;
+        return view('Elearning.Ujian.view_dokumen', $data);
+    }
+
     public function jawab_ujian(Request $req){
 
-        $this->validate($req,[
+         $this->validate($req,[
             'id_kunci_jabawan'=>'required',
-            'id_siswa'=>'required',
             'jawaban'=>'required',
             'id_ujian'=>'required',
             'no_urut'=>'required',
@@ -185,11 +255,7 @@ FROM tbl_daftar_soal WHERE id_tema_soal='.$mdoel_tema_ujian->id);
             ['jawaban'=> $req->jawaban]
         );
 
-        if($model){
-            return response()->json(['status'=>'success','message'=>'Anda telah memilih jawaban:'.$req->jawaban.' untuk soal ini']);
-        }else{
-            return response()->json(['status'=>'error','message'=>'Gagal, mengisi jawaban pastikan jaringan anda lancar']);
-        }
+        return redirect('jawaban-soal')->with('message_info','Anda telah memilih jawaban '. $req->jawaban);
 
     }
 
@@ -244,8 +310,8 @@ FROM tbl_daftar_soal WHERE id_tema_soal='.$mdoel_tema_ujian->id);
         $total_score = 0;
 
         foreach ($model as $data){
-            $data_jabawan_siswa = $data->linkToKunciJabawan->where('no_urut', $data->no_urut)->where('id_siswa', $req->id_siswa)->first();
-            if($data_jabawan_siswa->jawaban == $data->jawaban){
+            $data_jabawan_siswa = $data->linkToKunciJabawan->where('id_kunci_jawaban',$data->id)->where('no_urut', $data->no_urut)->where('id_siswa', $req->id_siswa)->first();
+             if($data_jabawan_siswa->jawaban == $data->jawaban){
                 $jawaban_score +=  $data->score;
                 $jawaban_benar_score +=  $data->score;
                 $jawaban_benar +=  1;

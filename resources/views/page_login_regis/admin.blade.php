@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Login V18</title>
+	<link rel='icon' href='{{ asset('PESRI.png') }}'>
+
+	<title>Mts Ummusshabri Admin</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-<!--===============================================================================================-->	
-	<link rel="icon" type="image/png" href="{{ asset('asset_LogReg/images/icons/favicon.ico') }}"/>
+<!--===============================================================================================-->
+	<link rel='icon' href='{{ asset('PESRI.png') }}'>
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="{{ asset('asset_LogReg/vendor/bootstrap/css/bootstrap.min.css') }}">
 <!--===============================================================================================-->
