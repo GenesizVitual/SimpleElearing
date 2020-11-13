@@ -29,6 +29,8 @@ Route::post('kategori-siswa','PPSB\Formulir@kategori_siswa');
 
 Route::resource('formulir-orang-tua','PPSB\FormulirOrangTua');
 
+Route::resource('upload-berkas','PPSB\UploadBerkas');
+
 //=============================== Elearning =====================================================
 
 Route::get('/', 'Elearning\Reglog@login');

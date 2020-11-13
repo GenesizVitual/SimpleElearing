@@ -39,4 +39,8 @@ class User extends Authenticatable
     public function LinkToKategoriSiswa(){
         return $this->hasOne('App\Model\PPSB\KategoriSiswa','id_user','id');
     }
+
+    public function LinkToBerkas(){
+        return $this->hasMany('App\Model\PPSB\UploadBerkas','id_user','id');
+    }
 }
